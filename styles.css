@@ -1,7 +1,9 @@
 /* General Styles */
+
+
 body {
-    background-color: black;
-    color: white;
+    background-color: #121212; /* Ciemnoszare tło */
+    color: #e0e0e0; /* Jasnoszary tekst */
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
@@ -9,17 +11,19 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+	overflow-x: hidden;
 }
+
+
 
 /* Logo Styles */
 .logo {
     text-align: center;
-    color: orange;
-    margin: 20px;
-    background-color: orange;
-    border-radius: 10px;
+    color: #ffffff; /* Biały tekst */
+    background-color: #673ab7; /* Fioletowe tło */
     width: 500px;
-    color: black;
+    padding: 10px;
+    border-radius: 10px;
 }
 
 /* Main Clicker Container */
@@ -62,8 +66,9 @@ body {
     padding: 20px;
     height: auto;
     width: 500px;
-    background-color: orange;
-    color: black;
+    background-color: #1e1e1e; /* Ciemnoszare tło */
+    color: #ffffff; /* Biały tekst */
+    border: 2px solid #673ab7; /* Fioletowa ramka */
     border-radius: 10px;
     text-align: center;
     display: flex;
@@ -76,6 +81,14 @@ body {
     margin: 10px 0;
 }
 
+.buy-food
+{
+	position: absolute;
+	left:53%;
+	margin-top:5%;
+	
+}
+
 /* Food Item Styling */
 .food-item {
     display: flex;
@@ -84,9 +97,10 @@ body {
     margin: 10px auto;
     padding: 15px;
     max-width: 350px;
-    background-color: white;
+    background-color: #2c2c2c; /* Ciemnoszare tło */
+    color: #ffffff; /* Biały tekst */
+    border: 1px solid #673ab7; /* Fioletowa ramka */
     border-radius: 10px;
-    cursor: grab;
     gap: 20px;
     transition: transform 0.3s ease-in-out;
 }
@@ -98,7 +112,7 @@ body {
     width: 90px;
     height: 90px;
     border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
 }
 
 .food-item span {
@@ -112,14 +126,15 @@ body {
     padding: 5px;
     font-size: 14px;
     text-align: center;
-    background-color: #f0f0f0;
-    border: 2px solid #ddd;
+    background-color: #1e1e1e; /* Ciemnoszare pole */
+    color: #ffffff; /* Biały tekst */
+    border: 1px solid #673ab7; /* Fioletowa ramka */
     border-radius: 5px;
     transition: border-color 0.2s;
 }
 
 .food-item input[type="number"]:focus {
-    border-color: #ff6600;
+    border-color: #9c27b0; /* Jasny fiolet */
     outline: none;
 }
 
@@ -128,7 +143,7 @@ body {
     padding: 10px 20px;
     font-size: 14px;
     color: white;
-    background-color: #ff6600;
+    background-color: #2196f3; /* Niebieski */
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -137,7 +152,7 @@ body {
 }
 
 .food-item button.buy-food:hover {
-    background-color: #cc5200;
+    background-color: #1976d2; /* Ciemny niebieski */
     transform: scale(1.05);
 }
 
@@ -149,7 +164,7 @@ body {
 .food-item span#food1-max, .food-item span#food2-max, .food-item span#food3-max,
 .food-item span#food4-max, .food-item span#food5-max, .food-item span#food6-max {
     font-size: 12px;
-    color: #ff6600;
+    color: #ffd54f; /* Złoty kolor */
     font-weight: bold;
 }
 
@@ -168,16 +183,25 @@ body {
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
-    gap: 5px;
+    gap: 10px;
+    background-color: #1e1e1e; /* Dark gray background */
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid #673ab7; /* Purple border */
+    transition: transform 0.3s ease-in-out;
+}
+
+.skin-item:hover {
+    transform: scale(1.05);
 }
 
 .skin-item img {
     width: 100px;
     height: 100px;
-    border: 2px solid black;
+    border: 2px solid #2c2c2c; /* Subtle dark border */
     border-radius: 10px;
     cursor: pointer;
-    transition: transform 0.2s, opacity 0.2s;
+    transition: transform 0.3s, opacity 0.3s;
     opacity: 0.5;
 }
 
@@ -186,7 +210,7 @@ body {
 }
 
 .skin-item img.active {
-    border-color: gold;
+    border-color: #ffd54f; /* Gold border for active skin */
     opacity: 1;
 }
 
@@ -197,11 +221,12 @@ body {
 
 .price {
     font-size: 14px;
-    color: black;
+    color: #ffd54f; /* Gold text for price */
     font-weight: bold;
     margin-top: 5px;
 }
 
+/* Reset Button */
 .reset-container {
     margin-top: 20px;
     text-align: center;
@@ -209,29 +234,32 @@ body {
 
 #resetButton {
     padding: 10px 20px;
-    background-color: orange;
-    color: white;
+    background-color: #2196f3; /* Blue */
+    color: #ffffff; /* White text */
     border: none;
     border-radius: 5px;
     font-size: 16px;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: background-color 0.3s, transform 0.2s;
 }
 
 #resetButton:hover {
-    background-color: orangered;
+    background-color: #1976d2; /* Darker blue */
+    transform: scale(1.05);
 }
 
 hr {
-    border: solid 1px black;
+    border: solid 1px #673ab7; /* Purple line */
     width: 80%;
+    margin: 20px auto;
 }
 
+/* Active Helpers */
 .active-helpers {
     position: absolute;
     top: 50%;
     left: 60%;
-    transform: translate(-10%, -50%);
+    transform: translate(100%, -50%);
     display: flex;
     gap: 10px;
 }
@@ -240,12 +268,17 @@ hr {
     width: 50px;
     height: 50px;
     border-radius: 50%;
+    background-color: #673ab7; /* Purple helper */
 }
 
-.hidden {
-    display: none;
+.active-helper2 {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #2196f3; /* Blue helper */
 }
 
+/* Helpers Section */
 .helpers {
     display: flex;
     flex-direction: column;
@@ -253,34 +286,110 @@ hr {
     margin-top: 20px;
 }
 
+.hidden
+{
+	display:none;
+}
+
 .helper-item {
     display: flex;
     align-items: center;
     gap: 10px;
-    background-color: white;
+    background-color: #2c2c2c; /* Dark gray background */
     padding: 10px;
     border-radius: 5px;
+    border: 1px solid #673ab7; /* Purple border */
     cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.helper-item:hover {
+    background-color: #1e1e1e; /* Slightly darker background */
+    transform: scale(1.05);
 }
 
 .helper-item img {
     width: 60px;
     height: 60px;
     border-radius: 50%;
+    border: 1px solid #673ab7; /* Subtle dark border */
 }
 
+/* Locked and Unlocked Skins */
 .song-image.locked {
     opacity: 0.5;
     cursor: not-allowed;
+    filter: grayscale(100%);
 }
 
 .song-image.unlocked {
     opacity: 1;
     cursor: pointer;
+    filter: none;
+	
 }
 
 img
 {
-    max-width: 300px;
-    max-height: 300px;
+	max-width:300px;
+	max-height:300px;
+	border:1px #673ab7 solid;
+}
+
+
+/* Responsive Styles */
+@media (max-width: 400px) {
+    .skin-item img {
+        width: 60px;
+        height: 60px;
+    }
+
+    #resetButton {
+        font-size: 14px;
+        padding: 8px 16px;
+    }
+}
+
+
+/* Responsive Styles */
+@media (max-width: 400px) {
+    .logo {
+        width: 100%;
+    }
+
+    .clicker {
+        width: 300px;
+		height: 300px;
+    }
+
+    .food-item {
+        gap: 5px;
+    }
+
+    .sklep {
+        width: 89%;
+        margin-top: 20px;
+    }
+
+    .skin-item img {
+        width: 80px;
+        height: 80px;
+    }
+	.active-helpers {
+    position: absolute;
+    top: 62%;
+    left: 60%;
+    transform: translate(100%, -50%);
+    display: flex;
+    gap: 10px;
+	}
+	.buy-food
+	{
+	position: absolute;
+	left:60%;
+	margin-top:20%;
+	
+	}
+	
+	
 }

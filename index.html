@@ -2,17 +2,17 @@
 <html>
 <head>
     <meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>Buszko Clicker</title>
     <link rel="stylesheet" href="styles.css">
-	<script src="https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js"></script>
-	<script src="https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js"></script>
-	<script src="https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js"></script>
-
+		<script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
+		<script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore-compat.js"></script>
+		<script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-auth-compat.js"></script>
 </head>
 <body>
     <div class="logo">
         <h1>Buszko Clicker</h1>
-        <h5>Pre-alpha.v.0.4</h5>
+        <h5>Pre-alpha.v.0.6</h5>
     </div>
     <div class="BuszkoClicker">
             <div class="info">
@@ -22,52 +22,14 @@
         
         <div class="Buszko">
             <div class="active-helpers">
-                <img id="helperDisplay1" class="active-helper hidden" src="Pies.png" alt="Active Kot">
+                <img id="helperDisplay1" class="active-helper hidden" src="Pies.png" alt="Active Pies">
+            </div>
+			<div class="active-helpers">
+                <img id="helperDisplay2" class="active-helper2 hidden" src="kot.jpg" alt="Active Kot">
             </div>
             <img src="buszon.png" alt="Buszko" class="clicker" id="buszko" draggable="false">
         </div>
-		<table id="leaderboard">
-   <thead>
-       <tr>
-           <th>Nick</th>
-           <th>Buszonki</th>
-       </tr>
-   </thead>
-   <tbody></tbody>
-</table>
-
-<script>
-   function displayLeaderboard() {
-       db.ref('users').orderByChild('buszonki').limitToLast(10).once('value', snapshot => {
-           const tableBody = document.querySelector('#leaderboard tbody');
-           tableBody.innerHTML = ''; // Wyczyszczenie tabeli
-           snapshot.forEach(childSnapshot => {
-               const data = childSnapshot.val();
-               const row = `<tr><td>${data.nickname}</td><td>${data.buszonki}</td></tr>`;
-               tableBody.innerHTML += row;
-           });
-       });
-   }
-   
-   auth.onAuthStateChanged(user => {
-       if (user) displayLeaderboard();
-   });
-</script>
-
-        <h2>Logowanie</h2>
-			<form id="loginForm">
-				<input type="email" id="email" placeholder="Email" required>
-				<input type="password" id="password" placeholder="Hasło" required>
-				<button type="button" onclick="login()">Zaloguj</button>
-			</form>
-
-			<h2>Rejestracja</h2>
-			<form id="registerForm">
-				<input type="email" id="regEmail" placeholder="Email" required>
-				<input type="password" id="regPassword" placeholder="Hasło" required>
-				<input type="text" id="nickname" placeholder="Nick" required>
-				<button type="button" onclick="register()">Zarejestruj</button>
-			</form>
+        
         <div class="sklep">
             <h2>Sklep</h2>
             <h3>Ulepszenia</h3>
@@ -127,7 +89,11 @@
             <div class="helpers">
                 <div class="helper-item" id="helper1">
                     <img src="Pies.png" alt="Pies Helper">
-                    <span>Luna [125000 Buszonki] Automatyczne 10% Buszonków na klik.</span>
+                    <span>Pies [125000 Buszonki] Automatyczne 2% Buszonków na klik.</span>
+                </div>
+                <div class="helper-item" id="helper1">
+                    <img src="kot.jpg" alt="Kot Helper">
+                    <span>Luna [500000 Buszonki] Automatyczne 5% Buszonków na klik.</span>
                 </div>
             </div>
 
@@ -141,23 +107,23 @@
                 </div>
                 <div class="skin-item">
                     <img src="buszko.png" alt="First Skin" title="First Skin">
-                    <p class="price">[Skupiony Buszon] 750 Buszonków (Buszonki razy 2)</p>
+                    <p class="price">[Skupiony Buszon] 7500 Buszonków (Buszonki razy 2)</p>
                 </div>
                 <div class="skin-item">
                     <img src="seba.png" alt="Second Skin" title="Second Skin">
-                    <p class="price">[Sebachad] 20000 Buszonków (Buszonki razy 5)</p>
+                    <p class="price">[Sebachad] 200000 Buszonków (Buszonki razy 5)</p>
                 </div>
                 <div class="skin-item">
                     <img src="sheison.png" alt="Third Skin" title="Third Skin">
-                    <p class="price">[ProSheison] 100000 Buszonków (Buszonki razy 10)</p>
+                    <p class="price">[ProSheison] 72000000 Buszonków (Buszonki razy 10)</p>
                 </div>
                 <div class="skin-item">
                     <img src="buszkobasen.jpg" alt="Fourth Skin" title="Fourth Skin">
-                    <p class="price">[Basenowy Buszko] 690000 Buszonków (Buszonki razy 55)</p>
+                    <p class="price">[Basenowy Buszko] 690000000 Buszonków (Buszonki razy 55)</p>
                 </div>
                 <div class="skin-item">
-                    <img src="kot.jpg" alt="Fifth Skin" title="Fifth Skin">
-                    <p class="price">[KittyKat] 100000000 Buszonków (Buszonki razy 100)</p>
+                    <img src="StrasznyBusz.png" alt="Fifth Skin" title="Fifth Skin">
+                    <p class="price">[KittyKat] 2300000000 Buszonków (Buszonki razy 100)</p>
                 </div>
                 <div class="skin-item">
                     <img src="sigmabusz.png" alt="Sixth Skin" title="Sixth Skin">
@@ -170,6 +136,10 @@
                 <div class="skin-item">
                     <img src="BoskiBusz.png" alt="Eight Skin" title="Eight Skin">
                     <p class="price">[BoskiBusz] 999999999999999999 Buszonków (Buszonki razy 1000)</p>
+                </div>
+                <div class="skin-item">
+                    <img src="RockSolidBusz.jpg" alt="Eight Skin" title="Eight Skin">
+                    <p class="price">[RockSolidBusz] 99999999999999999999999999999999 Buszonków (Buszonki razy 9999 i +10 do edging)</p>
                 </div>
             </div>
 			
@@ -192,32 +162,37 @@
             <hr>
             Wkrótce...
         </div>
-    </div>
-    
+		</div>
+			<div class="leaderboard">
+			<h3>Leaderboard</h3>
+			<table id="leaderboard-table">
+				<thead>
+					<tr>
+						<th>Rank</th>
+						<th>Player</th>
+						<th>Buszonki</th>
+					</tr>
+				</thead>
+				<tbody>
+					<!-- Leaderboard entries will appear here -->
+				</tbody>
+			</table>
+		</div>
+	
     <!-- Reset Button -->
     <div class="reset-container">
         <button id="resetButton">Reset Postępu</button>
     </div>
+	const firebaseConfig = {
+		apiKey: "AIzaSyBMPmNPLGHrBBU3d2DNgq1rutE5R5fBAWc",
+		authDomain: "buszkoclicker.firebaseapp.com",
+		projectId: "buszkoclicker",
+		storageBucket: "buszkoclicker.firebasestorage.app",
+		messagingSenderId: "951563794729",
+		appId: "1:951563794729:web:f02b247e6cc5c16cf41f38"
+	  };
 
     <script src="script.js"></script>
-		<script type="module">
-		  // Import the functions you need from the SDKs you need
-		  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-		  // TODO: Add SDKs for Firebase products that you want to use
-		  // https://firebase.google.com/docs/web/setup#available-libraries
-
-		  // Your web app's Firebase configuration
-		  const firebaseConfig = {
-			apiKey: "AIzaSyBMPmNPLGHrBBU3d2DNgq1rutE5R5fBAWc",
-			authDomain: "buszkoclicker.firebaseapp.com",
-			projectId: "buszkoclicker",
-			storageBucket: "buszkoclicker.firebasestorage.app",
-			messagingSenderId: "951563794729",
-			appId: "1:951563794729:web:f02b247e6cc5c16cf41f38"
-		  };
-
-		  // Initialize Firebase
-		  const app = initializeApp(firebaseConfig);
-		</script>
+		
 </body>
 </html>

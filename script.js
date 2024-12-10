@@ -14,12 +14,14 @@ const foodItems = document.querySelectorAll('.food-item');
 const skinImages = document.querySelectorAll('.skins .skin-item img');
 const resetButton = document.getElementById('resetButton');
 
-const skinPrices = [0, 750, 20000, 100000, 690000, 100000000, 420000000000, 69000000000000000, 999999999999999999];
-const skinMultipliers = [1, 2, 5, 10, 55, 100, 420, 696, 1000];
+const skinPrices = [0, 7500, 200000, 72000000, 690000000, 2300000000, 420000000000, 69000000000000000, 999999999999999999, 99999999999999999999999999999999];
+const skinMultipliers = [1, 2, 5, 10, 55, 100, 420, 696, 1000, 9999];
 const foodPrices = [100, 2500, 100000, 4444444, 240000000, 5600000000];
 const foodBuffs = [5, 25, 100, 444, 975, 1650];
-const helperPrices = [125000];
-const helperEarnings = [0.1]; // 10% of current Buszonki per click
+const helperPrices = [125000, 500000];
+const helperEarnings = [0.02, 0.05]; // 10% of current Buszonki per click
+
+
 
 // Update the coin display
 function updateCoinDisplay() {
@@ -271,24 +273,35 @@ const songs = [
 let currentAudio = null;
 let currentSongId = null;
 
+// Function to Update the UI for Locked/Unlocked Songs
+function updateSongUI(song) {
+    const songImage = document.getElementById(song.id);
+    if (song.unlocked) {
+        songImage.classList.remove('locked');
+        songImage.classList.add('unlocked');
+        songImage.title = "Kliknij żeby odtworzyć";
+    } else {
+        songImage.classList.remove('unlocked');
+        songImage.classList.add('locked');
+        songImage.title = `Locked: ${song.cost} Buszonki`;
+    }
+}
+
 // Function to Unlock Songs
 function unlockSong(song) {
     if (coins >= song.cost && !song.unlocked) {
         coins -= song.cost;
         song.unlocked = true;
 
-        const songImage = document.getElementById(song.id);
-        songImage.classList.remove('locked');
-        songImage.classList.add('unlocked');
-        songImage.title = "Kliknij żeby odtworzyć";
+        updateSongUI(song);
 
-        alert(`Unlocked "${song.id}"!`);
+        alert(`Odblokowałeś "${song.id}"!`);
         updateCoinDisplay();
         saveProgress();
     } else if (song.unlocked) {
-        alert("Już to odblokowałeś!");
+        alert("Już odblokowałeś tę piosenkę!");
     } else {
-        alert("Nie masz wystarczająco Buszonków, żeby to kupić!");
+        alert("Nie masz wystarczająco Buszonków, żeby odblokować!");
     }
 }
 
@@ -300,20 +313,17 @@ function toggleSongPlayback(song) {
     }
 
     if (currentAudio && currentSongId === song.id) {
-        // Stop the current song
         currentAudio.pause();
         currentAudio.currentTime = 0;
         currentAudio = null;
         currentSongId = null;
         alert(`Zatrzymano "${song.id}".`);
     } else {
-        // Stop any playing audio
         if (currentAudio) {
             currentAudio.pause();
             currentAudio.currentTime = 0;
         }
 
-        // Play the selected song
         currentAudio = new Audio(song.src);
         currentAudio.loop = true;
         currentAudio.play();
@@ -322,11 +332,14 @@ function toggleSongPlayback(song) {
     }
 }
 
-// Add Event Listeners for Song Images
+// Event Listeners - For UI Interaction
 songs.forEach(song => {
     const songImage = document.getElementById(song.id);
 
-    // Handle Click
+    // Update initial locked/unlocked state on page load
+    updateSongUI(song);
+
+    // Handle click events for unlocking or toggling playback
     songImage.addEventListener('click', () => {
         if (!song.unlocked) {
             unlockSong(song);
@@ -334,58 +347,6 @@ songs.forEach(song => {
             toggleSongPlayback(song);
         }
     });
-
-    // Update Initial Locked State
-    if (!song.unlocked) {
-        songImage.classList.add('locked');
-    } else {
-        songImage.classList.add('unlocked');
-    }
 });
 
-function register() {
-    const email = document.getElementById('regEmail').value;
-    const password = document.getElementById('regPassword').value;
-    const nickname = document.getElementById('nickname').value;
 
-    auth.createUserWithEmailAndPassword(email, password)
-        .then(userCredential => {
-            const user = userCredential.user;
-            db.ref('users/' + user.uid).set({
-                nickname: nickname,
-                buszonki: 0
-            });
-            alert('Rejestracja zakończona!');
-        })
-        .catch(error => alert(error.message));
-}
-
-function login() {
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-
-    auth.signInWithEmailAndPassword(email, password)
-        .then(userCredential => {
-            alert('Zalogowano pomyślnie!');
-        })
-        .catch(error => alert(error.message));
-}
-
-function saveScore(score) {
-    const user = auth.currentUser;
-    if (user) {
-        db.ref('users/' + user.uid).update({ buszonki: score });
-        alert('Wynik zapisany!');
-    } else {
-        alert('Zaloguj się, aby zapisać wynik!');
-    }
-}
-
-function getLeaderboard() {
-    db.ref('users').orderByChild('buszonki').limitToLast(10).once('value', snapshot => {
-        snapshot.forEach(childSnapshot => {
-            const data = childSnapshot.val();
-            console.log(`${data.nickname}: ${data.buszonki}`);
-        });
-    });
-}
