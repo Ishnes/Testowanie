@@ -349,21 +349,18 @@ songs.forEach(song => {
     });
 });
 
-document.addEventListener("DOMContentLoaded", () => {
-    const tabs = document.querySelectorAll(".shop-tab");
-    const sections = document.querySelectorAll(".shop-section");
+function openTab(tabId) {
+  // Ukryj wszystkie zakładki
+  const contents = document.querySelectorAll('.tab-content');
+  contents.forEach(content => content.classList.remove('active'));
 
-    tabs.forEach(tab => {
-        tab.addEventListener("click", () => {
-            // Dezaktywuj wszystkie zakładki i sekcje
-            tabs.forEach(t => t.classList.remove("active"));
-            sections.forEach(s => s.classList.remove("active", "hidden"));
+  // Usuń aktywne klasy z przycisków
+  const buttons = document.querySelectorAll('.tab-button');
+  buttons.forEach(button => button.classList.remove('active'));
 
-            // Aktywuj wybraną zakładkę i jej sekcję
-            tab.classList.add("active");
-            const targetId = tab.getAttribute("data-tab");
-            document.getElementById(targetId).classList.add("active");
-        });
-    });
-});
+  // Pokaż wybraną zakładkę
+  document.getElementById(tabId).classList.add('active');
 
+  // Ustaw aktywny przycisk
+  event.target.classList.add('active');
+}
