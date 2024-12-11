@@ -5,9 +5,6 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>Buszko Clicker</title>
     <link rel="stylesheet" href="styles.css">
-		<script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
-		<script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore-compat.js"></script>
-		<script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-auth-compat.js"></script>
 </head>
 <body>
     <div class="logo">
@@ -30,61 +27,145 @@
             <img src="buszon.png" alt="Buszko" class="clicker" id="buszko" draggable="false">
         </div>
         
-         
-	</div>
-
-	<div class="shop-container">
-  <!-- Zakładki -->
-  <div class="shop-tabs">
-    <button class="tab-button active" onclick="openTab('upgrades')">Ulepszenia</button>
-    <button class="tab-button" onclick="openTab('boosts')">Boosty</button>
-    <button class="tab-button" onclick="openTab('skins')">Skórki</button>
-  </div>
-
-  <!-- Zawartość zakładek -->
-  <div id="upgrades" class="tab-content active">
-    <div class="item">Ulepszenie 1</div>
-    <div class="item">Ulepszenie 2</div>
-  </div>
-
-  <div id="boosts" class="tab-content">
-    <div class="item">Boost 1</div>
-    <div class="item">Boost 2</div>
-  </div>
-
-  <div id="skins" class="tab-content">
-    <div class="item">Skórka 1</div>
-    <div class="item">Skórka 2</div>
-  </div>
-	</div>
-    
-
+        <div class="sklep">
+            <h2>Sklep</h2>
+            <h3>Ulepszenia</h3>
+            <hr>
+            <div class="food-item" id="food1">
+                <img src="sausage.jpg" alt="Kabanosy"> 
+                <span>Kabanosy [100 Buszonki] Buszonki +5</span>
+                <input type="number" id="food1-quantity" value="1" min="1">
+                <span id="food1-max">Max: 0</span> <!-- Max quantity display -->
+                <button class="buy-food" id="buy-food1">Kup</button>
+            </div>
             
+            <div class="food-item" id="food2">
+                <img src="bulka.png" alt="Bułka z masłem"> 
+                <span>Bułka z masłem [2500 Buszonki] Buszonki +25</span>
+                <input type="number" id="food2-quantity" value="1" min="1">
+                <span id="food2-max">Max: 0</span> <!-- Max quantity display -->
+                <button class="buy-food" id="buy-food2">Kup</button>
+            </div>
+            
+            <div class="food-item" id="food3">
+                <img src="grzeski.png" alt="grzeski"> 
+                <span>Grzeski [100000 Buszonki] Buszonki +100</span>
+                <input type="number" id="food3-quantity" value="1" min="1">
+                <span id="food3-max">Max: 0</span> <!-- Max quantity display -->
+                <button class="buy-food" id="buy-food3">Kup</button>
+            </div>
+            
+            <div class="food-item" id="food4">
+                <img src="banan.jpg" alt="Banan"> 
+                <span>Banan [4444444 Buszonki] Buszonki +444</span>
+                <input type="number" id="food4-quantity" value="1" min="1">
+                <span id="food4-max">Max: 0</span> <!-- Max quantity display -->
+                <button class="buy-food" id="buy-food4">Kup</button>
+            </div>
+            
+            <div class="food-item" id="food5">
+                <img src="parowka.jpg" alt="Parówka"> 
+                <span>Parówki z czajnika [240000000 Buszonki] Buszonki +975</span>
+                <input type="number" id="food5-quantity" value="1" min="1">
+                <span id="food5-max">Max: 0</span> <!-- Max quantity display -->
+                <button class="buy-food" id="buy-food5">Kup</button>
+            </div>
+            
+            <div class="food-item" id="food6">
+                <img src="pepsi.jpg" alt="Pepsi"> 
+                <span>Pepsi [5600000000 Buszonki] Buszonki +1650</span>
+                <input type="number" id="food6-quantity" value="1" min="1">
+                <span id="food6-max">Max: 0</span> <!-- Max quantity display -->
+                <button class="buy-food" id="buy-food6">Kup</button>
+            </div>
+            
+			
+            <h3>Pomocnicy</h3>
+            <hr>
+            Kliknij na pomocnika aby go odblokować
+            <div class="helpers">
+                <div class="helper-item" id="helper1">
+                    <img src="Pies.png" alt="Pies Helper">
+                    <span>Pies [125000 Buszonki] Automatyczne 2% Buszonków na klik.</span>
+                </div>
+                <div class="helper-item" id="helper1">
+                    <img src="kot.jpg" alt="Kot Helper">
+                    <span>Luna [500000 Buszonki] Automatyczne 5% Buszonków na klik.</span>
+                </div>
+            </div>
+
+            <h3>Skiny</h3>
+            <hr>
+            Kliknij na skina aby go odblokować
+            <div class="skins">
+                <div class="skin-item">
+                    <img src="buszon.png" alt="Default Skin" title="Default">
+                    <p class="price">[Buszko] Domyślny Buszko</p>
+                </div>
+                <div class="skin-item">
+                    <img src="buszko.png" alt="First Skin" title="First Skin">
+                    <p class="price">[Skupiony Buszon] 7500 Buszonków (Buszonki razy 2)</p>
+                </div>
+                <div class="skin-item">
+                    <img src="seba.png" alt="Second Skin" title="Second Skin">
+                    <p class="price">[Sebachad] 200000 Buszonków (Buszonki razy 5)</p>
+                </div>
+                <div class="skin-item">
+                    <img src="sheison.png" alt="Third Skin" title="Third Skin">
+                    <p class="price">[ProSheison] 72000000 Buszonków (Buszonki razy 10)</p>
+                </div>
+                <div class="skin-item">
+                    <img src="buszkobasen.jpg" alt="Fourth Skin" title="Fourth Skin">
+                    <p class="price">[Basenowy Buszko] 690000000 Buszonków (Buszonki razy 55)</p>
+                </div>
+                <div class="skin-item">
+                    <img src="StrasznyBusz.png" alt="Fifth Skin" title="Fifth Skin">
+                    <p class="price">[KittyKat] 2300000000 Buszonków (Buszonki razy 100)</p>
+                </div>
+                <div class="skin-item">
+                    <img src="sigmabusz.png" alt="Sixth Skin" title="Sixth Skin">
+                    <p class="price">[SigmaBusz] 420000000000 Buszonków (Buszonki razy 420)</p>
+                </div>
+                <div class="skin-item">
+                    <img src="buszkoxspiderman.png" alt="Seventh Skin" title="Seventh Skin">
+                    <p class="price">[Buszko x Spiderman] 69000000000000000 Buszonków (Buszonki razy 696)</p>
+                </div>
+                <div class="skin-item">
+                    <img src="BoskiBusz.png" alt="Eight Skin" title="Eight Skin">
+                    <p class="price">[BoskiBusz] 999999999999999999 Buszonków (Buszonki razy 1000)</p>
+                </div>
+                <div class="skin-item">
+                    <img src="RockSolidBusz.jpg" alt="Eight Skin" title="Eight Skin">
+                    <p class="price">[RockSolidBusz] 99999999999999999999999999999999 Buszonków (Buszonki razy 9999 i +10 do edging)</p>
+                </div>
+            </div>
+			
+            <h3>Szafa grająca</h3>
+            <hr>
+            Kliknij na utwór aby go odtworzyć
+            <div class="songs">
+                <div class="songs-item">
+                    <img src="bones.jpg" alt="Bones Song" id="song1" class="song-image unlocked" title="Click to Play (Free)">
+                    <p class="price">Bones Domyślna</p>
+                </div>
+                <div class="songs-item">
+                    <img src="enemy.jpg" alt="Enemy Song" id="song2" class="song-image locked" title="Locked: 999,999,999,999 Buszonki">
+                    <p class="price">Enemy 99999999999999999 Buszonków </p>
+                </div>
+            </div>
+            
+
+            <h3>Motywy</h3>
+            <hr>
+            Wkrótce...
         </div>
-		</div>
-			<div class="leaderboard">
-			<h3>Leaderboard</h3>
-			<table id="leaderboard-table">
-				<thead>
-					<tr>
-						<th>Rank</th>
-						<th>Player</th>
-						<th>Buszonki</th>
-					</tr>
-				</thead>
-				<tbody>
-					<!-- Leaderboard entries will appear here -->
-				</tbody>
-			</table>
-		</div>
-	
+    </div>
+    
     <!-- Reset Button -->
     <div class="reset-container">
         <button id="resetButton">Reset Postępu</button>
     </div>
-	
 
     <script src="script.js"></script>
-		
 </body>
 </html>

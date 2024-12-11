@@ -349,18 +349,4 @@ songs.forEach(song => {
     });
 });
 
-function openTab(tabId) {
-  // Ukryj wszystkie zakładki
-  const contents = document.querySelectorAll('.tab-content');
-  contents.forEach(content => content.classList.remove('active'));
 
-  // Usuń aktywne klasy z przycisków
-  const buttons = document.querySelectorAll('.tab-button');
-  buttons.forEach(button => button.classList.remove('active'));
-
-  // Pokaż wybraną zakładkę
-  document.getElementById(tabId).classList.add('active');
-
-  // Ustaw aktywny przycisk
-  event.target.classList.add('active');
-}
