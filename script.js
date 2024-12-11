@@ -28,6 +28,14 @@ function updateCoinDisplay() {
     coinDisplay.textContent = `Buszonki: ${Math.floor(coins)} (Buszonki na klikniecie: ${Math.floor(coinsPerClick)})`;
 }
 
+
+
+
+
+
+
+
+
 // Funkcja do zapisywania postępu w Firebase i localStorage
 function saveProgress() {
     const progress = {
@@ -41,13 +49,15 @@ function saveProgress() {
     };
 
     // Zapisz do Firebase
-    const userIP = await getUserIP();
+    async function saveProgressToFirebase(progress) {
+    const userIP = await getUserIP(); // Użycie await działa, bo funkcja jest async
     if (userIP) {
         const userRef = ref(db, `userProgress/${userIP}`);
         update(userRef, progress)
             .then(() => console.log("Postęp zapisany w Firebase"))
             .catch((error) => console.error("Błąd zapisu postępu do Firebase", error));
     }
+}
 
     // Zapisz do localStorage
     localStorage.setItem('buszkoClickerProgress', JSON.stringify(progress));
@@ -60,6 +70,7 @@ function loadProgress() {
         const progress = JSON.parse(savedProgress);
         coins = progress.coins || 0;
         baseCoinsPerClick = progress.baseCoinsPerClick || 1;
+        coinsPerClick = baseCoinsPerClick;
         foodBuff = progress.foodBuff || 0;
         currentSkin = progress.currentSkin || 0;
         unlockedSkins = progress.unlockedSkins || [true, false, false, false, false, false, false];
@@ -78,6 +89,7 @@ function loadProgress() {
 
         applySkin(currentSkin);
         updateCoinDisplay();
+        updateCoinsInFirebase();  // Synchronizuj dane z Firebase
         updateSkinUI();
 
         // Restart active helpers
@@ -127,9 +139,9 @@ function resetProgress() {
 
 // Funkcja do obsługi kliknięcia Buszko
 function clickBuszko() {
-    coins += coinsPerClick;
-    updateCoinDisplay();
-    saveProgress();  // Zapisz postęp gry (zaktualizowaną liczbę coinów) do Firebase i localStorage
+    coins += coinsPerClick; // Zwiększanie liczby coins o wartość coinsPerClick
+    updateCoinDisplay();  // Aktualizowanie wyświetlania liczby coins
+    saveProgress();  // Zapisz postęp gry
 }
 
 
@@ -148,9 +160,10 @@ function applySkin(skinIndex) {
 
 // Calculate coins per click
 function calculateCoinsPerClick() {
-    const skinMultiplier = skinMultipliers[currentSkin];
+    const skinMultiplier = skinMultipliers[currentSkin]; // Mnożnik skina
     coinsPerClick = (baseCoinsPerClick + foodBuff) * skinMultiplier;
 }
+
 
 // Update skin UI
 function updateSkinUI() {
