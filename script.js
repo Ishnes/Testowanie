@@ -40,9 +40,6 @@ function saveProgress() {
         lastOnline: Date.now(),
     };
     localStorage.setItem('buszkoClickerProgress', JSON.stringify(progress));
-    
-    // Synchronizacja z Firebase
-    saveScoreToFirebase('playerNickname', coins); // Zastąp 'playerNickname' rzeczywistym nickiem gracza
 }
 
 // Load progress
