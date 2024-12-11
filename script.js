@@ -28,7 +28,7 @@ function updateCoinDisplay() {
     coinDisplay.textContent = `Buszonki: ${Math.floor(coins)} (Buszonki na klikniecie: ${Math.floor(coinsPerClick)})`;
 }
 
-// Save progress with last online timestamp
+// Your saveProgress function will now work
 function saveProgress() {
     const progress = {
         coins,
