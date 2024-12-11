@@ -21,17 +21,7 @@ const db = getDatabase(app);
 
 
 
-// Funkcja do pobierania adresu IP użytkownika
-async function getUserIP() {
-    try {
-        const response = await fetch("https://api.ipify.org?format=json");
-        const data = await response.json();
-        return data.ip.replace(/\./g, "_"); // Zamiana kropek na podkreślenia
-    } catch (error) {
-        console.error("Nie udało się pobrać adresu IP:", error);
-        return null;
-    }
-}
+
 
 // Funkcja do zapisywania wyniku w Firebase
 // Zapisuje nick i wynik (liczbę coins) w Firebase
