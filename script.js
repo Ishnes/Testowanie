@@ -349,4 +349,21 @@ songs.forEach(song => {
     });
 });
 
+document.addEventListener("DOMContentLoaded", () => {
+    const tabs = document.querySelectorAll(".shop-tab");
+    const sections = document.querySelectorAll(".shop-section");
+
+    tabs.forEach(tab => {
+        tab.addEventListener("click", () => {
+            // Dezaktywuj wszystkie zakładki i sekcje
+            tabs.forEach(t => t.classList.remove("active"));
+            sections.forEach(s => s.classList.remove("active", "hidden"));
+
+            // Aktywuj wybraną zakładkę i jej sekcję
+            tab.classList.add("active");
+            const targetId = tab.getAttribute("data-tab");
+            document.getElementById(targetId).classList.add("active");
+        });
+    });
+});
 
