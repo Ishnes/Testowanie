@@ -18,6 +18,29 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 // Zmienna globalna reprezentująca liczbę "Buszonków"
+// Variables to track game state
+let coins = 0;
+let baseCoinsPerClick = 1;
+let coinsPerClick = baseCoinsPerClick;
+let foodBuff = 0;
+let currentSkin = 0;
+let unlockedSkins = [true, false, false, false, false, false, false];
+let activeHelpers = [false]; // Ensure this is initialized
+let lastSavedScore = 0;
+
+// DOM Elements
+const coinDisplay = document.querySelector('.coiny');
+const clickerImage = document.getElementById('buszko');
+const foodItems = document.querySelectorAll('.food-item');
+const skinImages = document.querySelectorAll('.skins .skin-item img');
+const resetButton = document.getElementById('resetButton');
+
+const skinPrices = [0, 7500, 200000, 72000000, 690000000, 2300000000, 420000000000, 69000000000000000, 999999999999999999, 99999999999999999999999999999999];
+const skinMultipliers = [1, 2, 5, 10, 55, 100, 420, 696, 1000, 9999];
+const foodPrices = [100, 2500, 100000, 4444444, 240000000, 5600000000];
+const foodBuffs = [5, 25, 100, 444, 975, 1650];
+const helperPrices = [125000, 500000];
+const helperEarnings = [0.02, 0.05]; // 10% of current Buszonki per click
 
 
 
@@ -113,54 +136,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // Inicjalizacja tablicy wyników
     updateLeaderboard();
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Variables to track game state
-let coins = 0;
-let baseCoinsPerClick = 1;
-let coinsPerClick = baseCoinsPerClick;
-let foodBuff = 0;
-let currentSkin = 0;
-let unlockedSkins = [true, false, false, false, false, false, false];
-let activeHelpers = [false]; // Ensure this is initialized
-let lastSavedScore = 0;
-
-
-
-
-// DOM Elements
-const coinDisplay = document.querySelector('.coiny');
-const clickerImage = document.getElementById('buszko');
-const foodItems = document.querySelectorAll('.food-item');
-const skinImages = document.querySelectorAll('.skins .skin-item img');
-const resetButton = document.getElementById('resetButton');
-
-const skinPrices = [0, 7500, 200000, 72000000, 690000000, 2300000000, 420000000000, 69000000000000000, 999999999999999999, 99999999999999999999999999999999];
-const skinMultipliers = [1, 2, 5, 10, 55, 100, 420, 696, 1000, 9999];
-const foodPrices = [100, 2500, 100000, 4444444, 240000000, 5600000000];
-const foodBuffs = [5, 25, 100, 444, 975, 1650];
-const helperPrices = [125000, 500000];
-const helperEarnings = [0.02, 0.05]; // 10% of current Buszonki per click
 
 // Pobiera IP użytkownika (przykład za pomocą API ipify.org)
 async function getUserIP() {
