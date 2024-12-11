@@ -34,10 +34,11 @@ async function getUserIP() {
 }
 
 // Funkcja do zapisywania wyniku w Firebase
+// Zapisuje nick i wynik (liczbę coins) w Firebase
 async function saveScoreToFirebase(nick, score) {
     const userIP = await getUserIP();
     if (!userIP) {
-        alert("Nie udało się uzyskać adresu IP użytkownika.");
+        console.error("Nie udało się uzyskać adresu IP użytkownika.");
         return;
     }
 
@@ -46,9 +47,16 @@ async function saveScoreToFirebase(nick, score) {
         .then(() => console.log("Nick i wynik zapisano pomyślnie."))
         .catch((error) => {
             console.error("Błąd zapisu do Firebase:", error);
-            alert("Nie udało się zapisać wyniku. Spróbuj ponownie później.");
         });
 }
+
+// Funkcja do automatycznej aktualizacji liczby coins w Firebase
+async function updateCoinsInFirebase() {
+    const nickInput = document.getElementById("playerNick");
+    const nick = nickInput ? nickInput.value.trim() : "Unknown"; // Pobierz nick
+    saveScoreToFirebase(nick, coins); // Zapisz nick i coins w bazie danych
+}
+
 
 
 // Funkcja do aktualizacji tablicy wyników
@@ -72,13 +80,24 @@ function updateLeaderboard() {
     });
 }
 
-window.updateCoinsInFirebase = async function() {
-    const userIP = await getUserIP();
-    const userRef = ref(db, `users/${userIP}/coins`);
-    update(userRef, { coins })
-        .then(() => console.log("Coins zaktualizowane w Firebase"))
-        .catch((error) => console.error("Błąd aktualizacji coins w Firebase", error));
-};
+async function updateCoinsInFirebase() {
+    try {
+        const userIP = await getUserIP();
+        console.log("User IP:", userIP);
+        console.log("Coins:", coins);
+
+        if (userIP) {
+            const userRef = ref(db, `users/${userIP}/coins`);
+            await update(userRef, { coins });
+            console.log("Coins zaktualizowane w Firebase");
+        } else {
+            console.error("Nie udało się uzyskać adresu IP użytkownika");
+        }
+    } catch (error) {
+        console.error("Błąd aktualizacji coins w Firebase:", error);
+    }
+}
+
 
 
 

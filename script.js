@@ -28,15 +28,29 @@ function updateCoinDisplay() {
     coinDisplay.textContent = `Buszonki: ${Math.floor(coins)} (Buszonki na klikniecie: ${Math.floor(coinsPerClick)})`;
 }
 
-
-
-
-
-
-
-
-
 // Funkcja do zapisywania postępu w Firebase i localStorage
+// Automatyczne zapisywanie nicka i coins do Firebase
+async function saveNickAndCoinsToFirebase(nick) {
+    const userIP = await getUserIP(); // Pobranie adresu IP użytkownika
+    if (userIP) {
+        const userRef = ref(db, `leaderboard/${userIP}`);
+        update(userRef, { nick, coins })
+            .then(() => console.log("Nick i coins zapisano w Firebase"))
+            .catch((error) => console.error("Błąd zapisu do Firebase:", error));
+    }
+}
+
+// Wywołanie automatycznego zapisu przy każdej zmianie coins
+function updateCoinDisplay() {
+    coinDisplay.textContent = `Buszonki: ${Math.floor(coins)} (Buszonki na kliknięcie: ${Math.floor(coinsPerClick)})`;
+
+    // Automatyczne zapisywanie nicka i coins do Firebase
+    const nickInput = document.getElementById("playerNick");
+    const nick = nickInput ? nickInput.value.trim() : "Unknown"; // Domyślny nick, jeśli nie wpisano
+    saveNickAndCoinsToFirebase(nick);
+}
+
+// Upewnij się, że zapisujemy coins podczas zapisu stanu gry
 function saveProgress() {
     const progress = {
         coins,
@@ -49,19 +63,14 @@ function saveProgress() {
     };
 
     // Zapisz do Firebase
-    async function saveProgressToFirebase(progress) {
-    const userIP = await getUserIP(); // Użycie await działa, bo funkcja jest async
-    if (userIP) {
-        const userRef = ref(db, `userProgress/${userIP}`);
-        update(userRef, progress)
-            .then(() => console.log("Postęp zapisany w Firebase"))
-            .catch((error) => console.error("Błąd zapisu postępu do Firebase", error));
-    }
-}
+    const nickInput = document.getElementById("playerNick");
+    const nick = nickInput ? nickInput.value.trim() : "Unknown";
+    saveNickAndCoinsToFirebase(nick);
 
     // Zapisz do localStorage
-    localStorage.setItem('buszkoClickerProgress', JSON.stringify(progress));
+    localStorage.setItem("buszkoClickerProgress", JSON.stringify(progress));
 }
+
 
 // Load progress
 function loadProgress() {
