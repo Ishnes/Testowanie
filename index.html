@@ -90,77 +90,72 @@
                 <div class="helper-item" id="helper1">
                     <img src="Pies.png" alt="Pies Helper">
                     <span>Pies [125000 Buszonki] Automatyczne 2% Buszonków na klik.</span>
-                </div>
-                <div class="helper-item" id="helper1">
-                    <img src="kot.jpg" alt="Kot Helper">
-                    <span>Luna [500000 Buszonki] Automatyczne 5% Buszonków na klik.</span>
-                </div>
+			<div class="sklep">
+    <h2>Sklep</h2>
+    <div class="shop-tabs">
+        <button class="shop-tab active" data-tab="upgrades">Ulepszenia</button>
+        <button class="shop-tab" data-tab="helpers">Pomocnicy</button>
+        <button class="shop-tab" data-tab="skins">Skiny</button>
+        <button class="shop-tab" data-tab="songs">Szafa grająca</button>
+    </div>
+    <div class="shop-content">
+        <div id="upgrades" class="shop-section active">
+            <!-- Sekcja ulepszeń -->
+            <h3>Ulepszenia</h3>
+            <hr>
+            <div class="food-item" id="food1">
+                <img src="sausage.jpg" alt="Kabanosy"> 
+                <span>Kabanosy [100 Buszonki] Buszonki +5</span>
+                <input type="number" id="food1-quantity" value="1" min="1">
+                <span id="food1-max">Max: 0</span>
+                <button class="buy-food" id="buy-food1">Kup</button>
             </div>
-
+            <!-- Dodaj resztę ulepszeń -->
+        </div>
+        <div id="helpers" class="shop-section hidden">
+            <!-- Sekcja pomocników -->
+            <h3>Pomocnicy</h3>
+            <hr>
+            Kliknij na pomocnika aby go odblokować
+            <div class="helpers">
+                <div class="helper-item" id="helper1">
+                    <img src="Pies.png" alt="Pies Helper">
+                    <span>Pies [125000 Buszonki]</span>
+                </div>
+                <!-- Dodaj resztę pomocników -->
+            </div>
+        </div>
+        <div id="skins" class="shop-section hidden">
+            <!-- Sekcja skinów -->
             <h3>Skiny</h3>
             <hr>
             Kliknij na skina aby go odblokować
             <div class="skins">
                 <div class="skin-item">
-                    <img src="buszon.png" alt="Default Skin" title="Default">
+                    <img src="buszon.png" alt="Default Skin">
                     <p class="price">[Buszko] Domyślny Buszko</p>
                 </div>
-                <div class="skin-item">
-                    <img src="buszko.png" alt="First Skin" title="First Skin">
-                    <p class="price">[Skupiony Buszon] 7500 Buszonków (Buszonki razy 2)</p>
-                </div>
-                <div class="skin-item">
-                    <img src="seba.png" alt="Second Skin" title="Second Skin">
-                    <p class="price">[Sebachad] 200000 Buszonków (Buszonki razy 5)</p>
-                </div>
-                <div class="skin-item">
-                    <img src="sheison.png" alt="Third Skin" title="Third Skin">
-                    <p class="price">[ProSheison] 72000000 Buszonków (Buszonki razy 10)</p>
-                </div>
-                <div class="skin-item">
-                    <img src="buszkobasen.jpg" alt="Fourth Skin" title="Fourth Skin">
-                    <p class="price">[Basenowy Buszko] 690000000 Buszonków (Buszonki razy 55)</p>
-                </div>
-                <div class="skin-item">
-                    <img src="StrasznyBusz.png" alt="Fifth Skin" title="Fifth Skin">
-                    <p class="price">[KittyKat] 2300000000 Buszonków (Buszonki razy 100)</p>
-                </div>
-                <div class="skin-item">
-                    <img src="sigmabusz.png" alt="Sixth Skin" title="Sixth Skin">
-                    <p class="price">[SigmaBusz] 420000000000 Buszonków (Buszonki razy 420)</p>
-                </div>
-                <div class="skin-item">
-                    <img src="buszkoxspiderman.png" alt="Seventh Skin" title="Seventh Skin">
-                    <p class="price">[Buszko x Spiderman] 69000000000000000 Buszonków (Buszonki razy 696)</p>
-                </div>
-                <div class="skin-item">
-                    <img src="BoskiBusz.png" alt="Eight Skin" title="Eight Skin">
-                    <p class="price">[BoskiBusz] 999999999999999999 Buszonków (Buszonki razy 1000)</p>
-                </div>
-                <div class="skin-item">
-                    <img src="RockSolidBusz.jpg" alt="Eight Skin" title="Eight Skin">
-                    <p class="price">[RockSolidBusz] 99999999999999999999999999999999 Buszonków (Buszonki razy 9999 i +10 do edging)</p>
-                </div>
+                <!-- Dodaj resztę skinów -->
             </div>
-			
+        </div>
+        <div id="songs" class="shop-section hidden">
+            <!-- Sekcja szafy grającej -->
             <h3>Szafa grająca</h3>
             <hr>
             Kliknij na utwór aby go odtworzyć
             <div class="songs">
                 <div class="songs-item">
-                    <img src="bones.jpg" alt="Bones Song" id="song1" class="song-image unlocked" title="Click to Play (Free)">
+                    <img src="bones.jpg" alt="Bones Song" id="song1">
                     <p class="price">Bones Domyślna</p>
                 </div>
-                <div class="songs-item">
-                    <img src="enemy.jpg" alt="Enemy Song" id="song2" class="song-image locked" title="Locked: 999,999,999,999 Buszonki">
-                    <p class="price">Enemy 99999999999999999 Buszonków </p>
-                </div>
+                <!-- Dodaj resztę utworów -->
             </div>
-            
+        </div>
+    </div>
+			</div>
+    
 
-            <h3>Motywy</h3>
-            <hr>
-            Wkrótce...
+            
         </div>
 		</div>
 			<div class="leaderboard">
