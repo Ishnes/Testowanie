@@ -17,6 +17,10 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+// Zmienna globalna reprezentująca liczbę "Buszonków"
+let coins = 0;
+let lastSavedScore = 0;
+
 // Funkcja do pobierania adresu IP użytkownika
 async function getUserIP() {
     try {
@@ -67,33 +71,33 @@ function updateLeaderboard() {
     });
 }
 
-// Zmienna globalna reprezentująca liczbę "Buszonków"
-let coins = 0;
-let lastSavedScore = 0;
-
-// Inicjalizacja po załadowaniu DOM
+// Sprawdzanie istnienia elementów przed przypisaniem zdarzenia
 document.addEventListener("DOMContentLoaded", () => {
     const submitButton = document.getElementById("submitNick");
     const nickInput = document.getElementById("playerNick");
 
-    if (submitButton && nickInput) {
-        submitButton.addEventListener("click", () => {
-            const nick = nickInput.value.trim();
-            if (!nick) {
-                alert("Podaj prawidłowy nick!");
-                return;
-            }
-            saveScoreToFirebase(nick, coins);
-        });
-
-        // Automatyczny zapis wyniku co 10 sekund
-      setInterval(() => {
-    const nick = nickInput.value.trim();
-    if (nick && coins !== lastSavedScore) {
-        saveScoreToFirebase(nick, coins); // Upewnij się, że zapisujesz aktualną wartość "coins"
-        lastSavedScore = coins;
+    if (!submitButton || !nickInput) {
+        console.error("Brak wymaganych elementów w DOM.");
+        return; // Zakończ, jeśli elementy nie istnieją
     }
-}, 10000);
+
+    submitButton.addEventListener("click", () => {
+        const nick = nickInput.value.trim();
+        if (!nick) {
+            alert("Podaj prawidłowy nick!");
+            return;
+        }
+        saveScoreToFirebase(nick, coins);
+    });
+
+    // Automatyczny zapis wyniku co 10 sekund
+    setInterval(() => {
+        const nick = nickInput.value.trim();
+        if (nick && coins !== lastSavedScore) {
+            saveScoreToFirebase(nick, coins);
+            lastSavedScore = coins;
+        }
+    }, 10000);
 
     // Inicjalizacja tablicy wyników
     updateLeaderboard();
