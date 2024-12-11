@@ -122,6 +122,41 @@
                     <img src="Pies.png" alt="Pies Helper">
                     <span>Pies [125000 Buszonki]</span>
                 </div>
+
+	</div>
+
+		<div class="sklep">
+    <h2>Sklep</h2>
+    <div class="shop-tabs">
+        <button class="shop-tab active" data-tab="upgrades">Ulepszenia</button>
+        <button class="shop-tab" data-tab="helpers">Pomocnicy</button>
+        <button class="shop-tab" data-tab="skins">Skiny</button>
+        <button class="shop-tab" data-tab="songs">Szafa grająca</button>
+    </div>
+    <div class="shop-content">
+        <div id="upgrades" class="shop-section active">
+            <!-- Sekcja ulepszeń -->
+            <h3>Ulepszenia</h3>
+            <hr>
+            <div class="food-item" id="food1">
+                <img src="sausage.jpg" alt="Kabanosy"> 
+                <span>Kabanosy [100 Buszonki] Buszonki +5</span>
+                <input type="number" id="food1-quantity" value="1" min="1">
+                <span id="food1-max">Max: 0</span>
+                <button class="buy-food" id="buy-food1">Kup</button>
+            </div>
+            <!-- Dodaj resztę ulepszeń -->
+        </div>
+        <div id="helpers" class="shop-section hidden">
+            <!-- Sekcja pomocników -->
+            <h3>Pomocnicy</h3>
+            <hr>
+            Kliknij na pomocnika aby go odblokować
+            <div class="helpers">
+                <div class="helper-item" id="helper1">
+                    <img src="Pies.png" alt="Pies Helper">
+                    <span>Pies [125000 Buszonki]</span>
+                </div>
                 <!-- Dodaj resztę pomocników -->
             </div>
         </div>
@@ -152,7 +187,7 @@
             </div>
         </div>
     </div>
-			</div>
+		</div>
     
 
             
