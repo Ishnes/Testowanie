@@ -1,19 +1,22 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
 import { getDatabase, ref, set, update, onValue } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
 
+// Konfiguracja Firebase
 const firebaseConfig = {
-  apiKey: "AIzaSyBMPmNPLGHrBBU3d2DNgq1rutE5R5fBAWc",
-  authDomain: "buszkoclicker.firebaseapp.com",
-  projectId: "buszkoclicker",
-  storageBucket: "buszkoclicker.firebasestorage.app",
-  messagingSenderId: "951563794729",
-  appId: "1:951563794729:web:f02b247e6cc5c16cf41f38"
+    apiKey: "AIzaSyBMPmNPLGHrBBU3d2DNgq1rutE5R5fBAWc",
+    authDomain: "buszkoclicker.firebaseapp.com",
+    databaseURL: "https://buszkoclicker-default-rtdb.firebaseio.com/",
+    projectId: "buszkoclicker",
+    storageBucket: "buszkoclicker.firebasestorage.app",
+    messagingSenderId: "951563794729",
+    appId: "1:951563794729:web:f02b247e6cc5c16cf41f38"
 };
 
-// Initialize Firebase
+// Inicjalizacja Firebase
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+// Funkcja do pobierania adresu IP użytkownika
 async function getUserIP() {
     try {
         const response = await fetch("https://api.ipify.org?format=json");
@@ -25,6 +28,7 @@ async function getUserIP() {
     }
 }
 
+// Funkcja do zapisywania wyniku w Firebase
 async function saveScoreToFirebase(nick, score) {
     const userIP = await getUserIP();
     if (!userIP) {
@@ -39,9 +43,11 @@ async function saveScoreToFirebase(nick, score) {
         })
         .catch((error) => {
             console.error("Błąd zapisu do Firebase:", error);
+            alert("Nie udało się zapisać wyniku. Spróbuj ponownie później.");
         });
 }
 
+// Funkcja do aktualizacji tablicy wyników
 function updateLeaderboard() {
     const leaderboardRef = ref(db, "leaderboard");
     onValue(leaderboardRef, (snapshot) => {
@@ -60,22 +66,28 @@ function updateLeaderboard() {
     });
 }
 
-document.getElementById("submitNick").addEventListener("click", () => {
-    const nick = document.getElementById("playerNick").value.trim();
-    if (!nick) {
-        alert("Podaj prawidłowy nick!");
-        return;
-    }
-    saveScoreToFirebase(nick, coins); // `coins` to liczba Buszonków
-});
+// Zmienna globalna reprezentująca liczbę "Buszonków"
+let coins = 0;
 
-setInterval(() => {
-    const nick = document.getElementById("playerNick").value.trim();
-    if (nick) {
-        saveScoreToFirebase(nick, coins);
-    }
-}, 10000); // Co 10 sekund
-
+// Obsługa przycisku do zapisywania nicku i wyniku
 document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("submitNick").addEventListener("click", () => {
+        const nick = document.getElementById("playerNick").value.trim();
+        if (!nick) {
+            alert("Podaj prawidłowy nick!");
+            return;
+        }
+        saveScoreToFirebase(nick, coins);
+    });
+
+    // Automatyczny zapis wyniku co 10 sekund
+    setInterval(() => {
+        const nick = document.getElementById("playerNick").value.trim();
+        if (nick) {
+            saveScoreToFirebase(nick, coins);
+        }
+    }, 10000);
+
+    // Inicjalizacja tablicy wyników
     updateLeaderboard();
 });
