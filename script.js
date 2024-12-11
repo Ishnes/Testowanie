@@ -21,6 +21,24 @@ const foodBuffs = [5, 25, 100, 444, 975, 1650];
 const helperPrices = [125000, 500000];
 const helperEarnings = [0.02, 0.05]; // 10% of current Buszonki per click
 
+// Pobiera IP użytkownika (przykład za pomocą API ipify.org)
+async function getUserIP() {
+    try {
+        const response = await fetch('https://api.ipify.org?format=json');
+        const data = await response.json();
+        return data.ip;
+    } catch (error) {
+        console.error('Nie udało się pobrać adresu IP:', error);
+        return null;
+    }
+}
+
+// Funkcja do synchronizacji monet w Firebase
+function updateCoinsInFirebase() {
+    console.log("Synchronizacja monet w Firebase...");
+    // Tutaj możesz dodać logikę aktualizacji w Firebase, jeśli jest potrzebna
+}
+
 
 // Funkcja do zapisywania postępu w Firebase i localStorage
 // Automatyczne zapisywanie nicka i coins do Firebase
