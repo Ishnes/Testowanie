@@ -318,3 +318,34 @@ button.buy-food:active {
 	
 
 }
+
+.shop-container {
+  width: 80%;
+  margin: auto;
+}
+
+.shop-tabs {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 10px;
+}
+
+.tab-button {
+  padding: 10px 20px;
+  background: #ddd;
+  border: none;
+  cursor: pointer;
+}
+
+.tab-button.active {
+  background: #555;
+  color: white;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
