@@ -72,6 +72,16 @@ function updateLeaderboard() {
     });
 }
 
+window.updateCoinsInFirebase = async function() {
+    const userIP = await getUserIP();
+    const userRef = ref(db, `users/${userIP}/coins`);
+    update(userRef, { coins })
+        .then(() => console.log("Coins zaktualizowane w Firebase"))
+        .catch((error) => console.error("Błąd aktualizacji coins w Firebase", error));
+};
+
+
+
 // Sprawdzanie istnienia elementów przed przypisaniem zdarzenia
 document.addEventListener("DOMContentLoaded", () => {
     const submitButton = document.getElementById("submitNick");
