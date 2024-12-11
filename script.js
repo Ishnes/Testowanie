@@ -22,12 +22,6 @@ const helperPrices = [125000, 500000];
 const helperEarnings = [0.02, 0.05]; // 10% of current Buszonki per click
 
 
-
-// Update the coin display
-function updateCoinDisplay() {
-    coinDisplay.textContent = `Buszonki: ${Math.floor(coins)} (Buszonki na klikniecie: ${Math.floor(coinsPerClick)})`;
-}
-
 // Funkcja do zapisywania postępu w Firebase i localStorage
 // Automatyczne zapisywanie nicka i coins do Firebase
 async function saveNickAndCoinsToFirebase(nick) {

@@ -50,15 +50,6 @@ async function saveScoreToFirebase(nick, score) {
         });
 }
 
-// Funkcja do automatycznej aktualizacji liczby coins w Firebase
-async function updateCoinsInFirebase() {
-    const nickInput = document.getElementById("playerNick");
-    const nick = nickInput ? nickInput.value.trim() : "Unknown"; // Pobierz nick
-    saveScoreToFirebase(nick, coins); // Zapisz nick i coins w bazie danych
-}
-
-
-
 // Funkcja do aktualizacji tablicy wyników
 function updateLeaderboard() {
     const leaderboardRef = ref(db, "leaderboard");
