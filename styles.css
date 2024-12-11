@@ -329,6 +329,16 @@ hr {
 	
 }
 
+.leaderboard{
+	border:2px #673ab7 solid;
+	background-color:#1e1e1e;
+	border-radius:10px;
+	padding: 20px;
+	height: auto;
+ 	width: 500px;
+}
+
+
 img
 {
 	max-width:300px;
@@ -393,3 +403,40 @@ img
 	
 	
 }
+
+
+/* Zakładki */
+.tabs {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.tab-button {
+    padding: 10px 20px;
+    background-color: #673ab7;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.tab-button:hover {
+    background-color: #9c27b0;
+}
+
+.tab-section {
+    display: none;
+}
+
+.tab-section.active {
+    display: block;
+}
+
+/* Ukryte sekcje */
+.hidden {
+    display: none;
+}
+
+
