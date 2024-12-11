@@ -36,10 +36,13 @@ function saveProgress() {
         foodBuff,
         currentSkin,
         unlockedSkins,
-        activeHelpers, // Save active helpers state
-        lastOnline: Date.now(), // Save the current timestamp
+        activeHelpers,
+        lastOnline: Date.now(),
     };
     localStorage.setItem('buszkoClickerProgress', JSON.stringify(progress));
+    
+    // Synchronizacja z Firebase
+    saveScoreToFirebase('playerNickname', coins); // Zastąp 'playerNickname' rzeczywistym nickiem gracza
 }
 
 // Load progress

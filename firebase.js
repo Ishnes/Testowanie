@@ -87,14 +87,13 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         // Automatyczny zapis wyniku co 10 sekund
-        setInterval(() => {
-            const nick = nickInput.value.trim();
-            if (nick && coins !== lastSavedScore) {
-                saveScoreToFirebase(nick, coins);
-                lastSavedScore = coins;
-            }
-        }, 10000);
+      setInterval(() => {
+    const nick = nickInput.value.trim();
+    if (nick && coins !== lastSavedScore) {
+        saveScoreToFirebase(nick, coins); // Upewnij się, że zapisujesz aktualną wartość "coins"
+        lastSavedScore = coins;
     }
+}, 10000);
 
     // Inicjalizacja tablicy wyników
     updateLeaderboard();
