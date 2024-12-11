@@ -103,19 +103,3 @@ document.addEventListener("DOMContentLoaded", () => {
     updateLeaderboard();
 });
 
-// Your saveProgress function will now work
-function saveProgress() {
-    const progress = {
-        coins,
-        baseCoinsPerClick,
-        foodBuff,
-        currentSkin,
-        unlockedSkins,
-        activeHelpers,
-        lastOnline: Date.now(),
-    };
-    localStorage.setItem('buszkoClickerProgress', JSON.stringify(progress));
-    
-    // Synchronizacja z Firebase
-    saveScoreToFirebase('playerNickname', coins); // Zastąp 'playerNickname' rzeczywistym nickiem gracza
-}
