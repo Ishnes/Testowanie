@@ -1,5 +1,6 @@
+// Import Firebase SDK
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-import { getDatabase, ref, set, update, onValue } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
+import { getDatabase, ref, update, onValue } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
 
 // Konfiguracja Firebase
 const firebaseConfig = {
@@ -12,7 +13,6 @@ const firebaseConfig = {
     appId: "1:951563794729:web:f02b247e6cc5c16cf41f38"
 };
 
-
 // Inicjalizacja Firebase
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
@@ -22,7 +22,7 @@ async function getUserIP() {
     try {
         const response = await fetch("https://api.ipify.org?format=json");
         const data = await response.json();
-        return data.ip;
+        return data.ip.replace(/\./g, "_"); // Zamiana kropek na podkreślenia
     } catch (error) {
         console.error("Nie udało się pobrać adresu IP:", error);
         return null;
@@ -39,9 +39,7 @@ async function saveScoreToFirebase(nick, score) {
 
     const userRef = ref(db, `leaderboard/${userIP}`);
     update(userRef, { nick, score })
-        .then(() => {
-            console.log("Nick i wynik zapisano pomyślnie.");
-        })
+        .then(() => console.log("Nick i wynik zapisano pomyślnie."))
         .catch((error) => {
             console.error("Błąd zapisu do Firebase:", error);
             alert("Nie udało się zapisać wyniku. Spróbuj ponownie później.");
@@ -53,6 +51,8 @@ function updateLeaderboard() {
     const leaderboardRef = ref(db, "leaderboard");
     onValue(leaderboardRef, (snapshot) => {
         const leaderboardTable = document.querySelector("#leaderboardTable tbody");
+        if (!leaderboardTable) return;
+
         leaderboardTable.innerHTML = ""; // Wyczyść tabelę przed odświeżeniem
 
         const data = snapshot.val();
@@ -69,25 +69,32 @@ function updateLeaderboard() {
 
 // Zmienna globalna reprezentująca liczbę "Buszonków"
 let coins = 0;
+let lastSavedScore = 0;
 
-// Obsługa przycisku do zapisywania nicku i wyniku
+// Inicjalizacja po załadowaniu DOM
 document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("submitNick").addEventListener("click", () => {
-        const nick = document.getElementById("playerNick").value.trim();
-        if (!nick) {
-            alert("Podaj prawidłowy nick!");
-            return;
-        }
-        saveScoreToFirebase(nick, coins);
-    });
+    const submitButton = document.getElementById("submitNick");
+    const nickInput = document.getElementById("playerNick");
 
-    // Automatyczny zapis wyniku co 10 sekund
-    setInterval(() => {
-        const nick = document.getElementById("playerNick").value.trim();
-        if (nick) {
+    if (submitButton && nickInput) {
+        submitButton.addEventListener("click", () => {
+            const nick = nickInput.value.trim();
+            if (!nick) {
+                alert("Podaj prawidłowy nick!");
+                return;
+            }
             saveScoreToFirebase(nick, coins);
-        }
-    }, 10000);
+        });
+
+        // Automatyczny zapis wyniku co 10 sekund
+        setInterval(() => {
+            const nick = nickInput.value.trim();
+            if (nick && coins !== lastSavedScore) {
+                saveScoreToFirebase(nick, coins);
+                lastSavedScore = coins;
+            }
+        }, 10000);
+    }
 
     // Inicjalizacja tablicy wyników
     updateLeaderboard();
