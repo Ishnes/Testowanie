@@ -5,12 +5,13 @@ import { getDatabase, ref, set, update, onValue } from "https://www.gstatic.com/
 const firebaseConfig = {
     apiKey: "AIzaSyBMPmNPLGHrBBU3d2DNgq1rutE5R5fBAWc",
     authDomain: "buszkoclicker.firebaseapp.com",
-    databaseURL: "https://buszkoclicker-default-rtdb.firebaseio.com/",
+    databaseURL: "https://buszkoclicker-default-rtdb.europe-west1.firebasedatabase.app",
     projectId: "buszkoclicker",
     storageBucket: "buszkoclicker.firebasestorage.app",
     messagingSenderId: "951563794729",
     appId: "1:951563794729:web:f02b247e6cc5c16cf41f38"
 };
+
 
 // Inicjalizacja Firebase
 const app = initializeApp(firebaseConfig);
