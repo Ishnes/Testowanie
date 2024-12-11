@@ -1,6 +1,6 @@
 // Import Firebase SDK
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-import { getDatabase, ref, update, onValue } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
+import { getDatabase, ref, update, onValue, set } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
 
 // Konfiguracja Firebase
 const firebaseConfig = {
@@ -49,6 +49,7 @@ async function saveScoreToFirebase(nick, score) {
             alert("Nie udało się zapisać wyniku. Spróbuj ponownie później.");
         });
 }
+
 
 // Funkcja do aktualizacji tablicy wyników
 function updateLeaderboard() {

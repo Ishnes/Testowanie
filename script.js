@@ -28,7 +28,7 @@ function updateCoinDisplay() {
     coinDisplay.textContent = `Buszonki: ${Math.floor(coins)} (Buszonki na klikniecie: ${Math.floor(coinsPerClick)})`;
 }
 
-// Your saveProgress function will now work
+// Funkcja do zapisywania postępu w Firebase i localStorage
 function saveProgress() {
     const progress = {
         coins,
@@ -39,6 +39,17 @@ function saveProgress() {
         activeHelpers,
         lastOnline: Date.now(),
     };
+
+    // Zapisz do Firebase
+    const userIP = await getUserIP();
+    if (userIP) {
+        const userRef = ref(db, `userProgress/${userIP}`);
+        update(userRef, progress)
+            .then(() => console.log("Postęp zapisany w Firebase"))
+            .catch((error) => console.error("Błąd zapisu postępu do Firebase", error));
+    }
+
+    // Zapisz do localStorage
     localStorage.setItem('buszkoClickerProgress', JSON.stringify(progress));
 }
 
@@ -114,12 +125,13 @@ function resetProgress() {
     }
 }
 
-// Buszko click handler
+// Funkcja do obsługi kliknięcia Buszko
 function clickBuszko() {
     coins += coinsPerClick;
     updateCoinDisplay();
-    saveProgress();
+    saveProgress();  // Zapisz postęp gry (zaktualizowaną liczbę coinów) do Firebase i localStorage
 }
+
 
 // Apply a skin
 function applySkin(skinIndex) {
