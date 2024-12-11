@@ -19,7 +19,7 @@ const db = getDatabase(app);
 
 // Zmienna globalna reprezentująca liczbę "Buszonków"
 
-let lastSavedScore = 0;
+
 
 // Funkcja do pobierania adresu IP użytkownika
 async function getUserIP() {
