@@ -56,44 +56,6 @@ const songs = [
     { id: 'song2', cost: 99999999999999999, src: 'enemy.mp3', unlocked: false },
 ];
 
-document.getElementById('foodTab').addEventListener('click', function() {
-    showSection('foodSection');
-});
-
-document.getElementById('helpersTab').addEventListener('click', function() {
-    showSection('helpersSection');
-});
-
-document.getElementById('skinsTab').addEventListener('click', function() {
-    showSection('skinsSection');
-});
-
-document.getElementById('songsTab').addEventListener('click', function() {
-    showSection('songsSection');
-});
-
-function showSection(sectionId) {
-    // Ukryj wszystkie sekcje
-    const sections = document.querySelectorAll('.tab-section');
-    sections.forEach(section => {
-        section.classList.remove('active');
-    });
-    // Pokaż wybraną sekcję
-    const section = document.getElementById(sectionId);
-    section.classList.add('active');
-}
-         
-// Sprawdzanie istnienia elementów przed przypisaniem zdarzenia
-document.addEventListener("DOMContentLoaded", () => {
-    const submitButton = document.getElementById("submitNick");
-    const nickInput = document.getElementById("playerNick");
-    if (!submitButton || !nickInput) {
-        console.error("Brak wymaganych elementów w DOM.");
-        return; // Zakończ, jeśli elementy nie istnieją
-
-    }
-
-
 // Upewnij się, że zapisujemy coins podczas zapisu stanu gry
 function saveProgress() {
 
@@ -104,14 +66,17 @@ function saveProgress() {
         currentSkin,
         unlockedSkins,
         activeHelpers,
-        lastOnline: Date.now()
+        lastOnline: Date.now(),
 		
     };
 
 updateCoinsInFirebase();
-
+}
 // Save progress periodically to track the last online time
-setInterval(saveProgress, 10000); // Save every 10 seconds
+setInterval(() => {
+    saveProgress();
+}, 10000); // Zapisuj co 10 sekund
+
 
 // Load progress
 function loadProgress() {
@@ -403,15 +368,7 @@ songs.forEach(song => {
     });
 });
 
-submitButton.addEventListener("click", () => {
 
-        const nick = nickInput.value.trim();
-        if (!nick) {
-            alert("Podaj prawidłowy nick!");
-            return;
-        }
-        saveScoreToFirebase(nick, coins);
-    });
 
 // Wywołanie automatycznego zapisu przy każdej zmianie coins
 function updateCoinDisplay() {
@@ -503,8 +460,6 @@ async function updateCoinsInFirebase() {
     }
 }
 
-
-
 // Funkcja do aktualizacji tablicy wyników
 function updateLeaderboard() {
     const leaderboardRef = ref(db, "leaderboard");
@@ -524,7 +479,51 @@ function updateLeaderboard() {
     });
 }
 
+document.getElementById('foodTab').addEventListener('click', function() {
+    showSection('foodSection');
+});
 
+document.getElementById('helpersTab').addEventListener('click', function() {
+    showSection('helpersSection');
+});
 
+document.getElementById('skinsTab').addEventListener('click', function() {
+    showSection('skinsSection');
+});
+
+document.getElementById('songsTab').addEventListener('click', function() {
+    showSection('songsSection');
+});
+
+function showSection(sectionId) {
+    // Ukryj wszystkie sekcje
+    const sections = document.querySelectorAll('.tab-section');
+    sections.forEach(section => {
+        section.classList.remove('active');
+    });
+    // Pokaż wybraną sekcję
+    const section = document.getElementById(sectionId);
+    section.classList.add('active');
+}
+         
+// Sprawdzanie istnienia elementów przed przypisaniem zdarzenia
+document.addEventListener("DOMContentLoaded", () => {
+    const submitButton = document.getElementById("submitNick");
+    const nickInput = document.getElementById("playerNick");
+    if (!submitButton || !nickInput) {
+        console.error("Brak wymaganych elementów w DOM.");
+        return; // Zakończ, jeśli elementy nie istnieją
+
+    }
+	submitButton.addEventListener("click", () => {
+
+        const nick = nickInput.value.trim();
+        if (!nick) {
+            alert("Podaj prawidłowy nick!");
+            return;
+        }
+        saveScoreToFirebase(nick, coins);
+    });
+});
 
 
