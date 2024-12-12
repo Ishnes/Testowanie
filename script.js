@@ -88,6 +88,8 @@ function loadProgress() {
     if (savedProgress) {
         const progress = JSON.parse(savedProgress);
         coins = progress.coins || 0;
+	currentNick = progress.nick || ""; // Wczytaj nick
+        nickInput.value = currentNick; // Ustaw nick w polu tekstowym
         baseCoinsPerClick = progress.baseCoinsPerClick || 1;
         coinsPerClick = baseCoinsPerClick;
         foodBuff = progress.foodBuff || 0;
