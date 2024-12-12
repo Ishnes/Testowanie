@@ -372,21 +372,24 @@ songs.forEach(song => {
 
 // Wywołanie automatycznego zapisu przy każdej zmianie coins
 function updateCoinDisplay() {
-    coinDisplay.textContent = `Buszonki: ${Math.floor(coins)} (Buszonki na kliknięcie: ${Math.floor(coinsPerClick)})`;
-    // Automatyczne zapisywanie nicka i coins do Firebase
+    // Sprawdzenie poprawności i zaokrąglenie wartości monet
+    const safeCoins = Number.isFinite(coins) ? Math.floor(coins) : 0;
+    const safeCoinsPerClick = Number.isFinite(coinsPerClick) ? Math.floor(coinsPerClick) : 0;
+    // Aktualizacja wyświetlania tekstu
+    coinDisplay.textContent = `Buszonki: ${safeCoins} (Buszonki na kliknięcie: ${safeCoinsPerClick})`;
+    // Pobranie nicku gracza z pola input
     const nickInput = document.getElementById("playerNick");
-    const nick = nickInput ? nickInput.value.trim() : "Unknown"; // Domyślny nick, jeśli nie wpisano
+    const nick = nickInput ? nickInput.value.trim() : "Unknown"; // Domyślny nick, jeśli brak danych
+    // Zapisanie danych do Firebase
     saveNickAndCoinsToFirebase(nick);
+    // Zapisanie danych do localStorage
+    if (progress && typeof progress === 'object') {
+        localStorage.setItem("buszkoClickerProgress", JSON.stringify(progress));
+    } else {
+        console.error('Niepoprawny obiekt progress:', progress);
+    }
 }
 
-    // Zapisz do Firebase
-    const nickInput = document.getElementById("playerNick");
-    const nick = nickInput ? nickInput.value.trim() : "Unknown";
-    saveNickAndCoinsToFirebase(nick);
-
-    // Zapisz do localStorage
-    localStorage.setItem("buszkoClickerProgress", JSON.stringify(progress));
-}
 
 // Pobiera IP użytkownika (przykład za pomocą API ipify.org)
 
