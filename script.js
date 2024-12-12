@@ -123,31 +123,19 @@ let progress = {};
 
 
 function saveProgress() {
-
     progress = {
-
         coins,
-
         baseCoinsPerClick,
-
         foodBuff,
-
         currentSkin,
-
         unlockedSkins,
-
         activeHelpers,
-
         lastOnline: Date.now(),
-
+        nick: currentNick, // Dodaj nick do lokalnego stanu gry
     };
-
     updateCoinsInFirebase();
-
-    // Zapis do localStorage
-
+    saveNickAndCoinsToFirebase(currentNick);
     localStorage.setItem("buszkoClickerProgress", JSON.stringify(progress));
-
 }
 
 
