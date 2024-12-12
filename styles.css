@@ -178,6 +178,7 @@ body {
 }
 
 .skin-item {
+    width:300px;
     text-align: left;
     display: flex;
     flex-direction: column;
