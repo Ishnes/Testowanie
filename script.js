@@ -744,7 +744,7 @@ submitButton.addEventListener("click", () => {
         return;
     }
     currentNick = nick; // Zapisz nick do globalnej zmiennej
-    saveScoreToFirebase(nick, coins); // Zapisz nick i coins w Firebase
+    saveScoreToFirebase(nick); // Zapisz nick i coins w Firebase
 });
 
 
