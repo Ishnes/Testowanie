@@ -56,6 +56,44 @@ const songs = [
     { id: 'song2', cost: 99999999999999999, src: 'enemy.mp3', unlocked: false },
 ];
 
+document.getElementById('foodTab').addEventListener('click', function() {
+    showSection('foodSection');
+});
+
+document.getElementById('helpersTab').addEventListener('click', function() {
+    showSection('helpersSection');
+});
+
+document.getElementById('skinsTab').addEventListener('click', function() {
+    showSection('skinsSection');
+});
+
+document.getElementById('songsTab').addEventListener('click', function() {
+    showSection('songsSection');
+});
+
+function showSection(sectionId) {
+    // Ukryj wszystkie sekcje
+    const sections = document.querySelectorAll('.tab-section');
+    sections.forEach(section => {
+        section.classList.remove('active');
+    });
+    // Pokaż wybraną sekcję
+    const section = document.getElementById(sectionId);
+    section.classList.add('active');
+}
+         
+// Sprawdzanie istnienia elementów przed przypisaniem zdarzenia
+document.addEventListener("DOMContentLoaded", () => {
+    const submitButton = document.getElementById("submitNick");
+    const nickInput = document.getElementById("playerNick");
+    if (!submitButton || !nickInput) {
+        console.error("Brak wymaganych elementów w DOM.");
+        return; // Zakończ, jeśli elementy nie istnieją
+
+    }
+
+
 // Upewnij się, że zapisujemy coins podczas zapisu stanu gry
 function saveProgress() {
 
@@ -66,9 +104,11 @@ function saveProgress() {
         currentSkin,
         unlockedSkins,
         activeHelpers,
-        lastOnline: Date.now(),
-		updateCoinsInFirebase()
+        lastOnline: Date.now()
+		
     };
+
+updateCoinsInFirebase();
 
 // Save progress periodically to track the last online time
 setInterval(saveProgress, 10000); // Save every 10 seconds
@@ -236,9 +276,6 @@ foodItems.forEach((foodItem, index) => {
             alert(`Nie masz wystarczająco Buszonków, żeby to kupić!`);
         }
     });
-
-    // Recalculate max quantity when coins change (if needed)
-    setInterval(updateMaxQuantity, 1000); // Update every second (or whenever you need)
 });
 
 // Event listener for Buszko click
@@ -407,13 +444,6 @@ async function getUserIP() {
     }
 }
 
-// Funkcja do synchronizacji monet w Firebase
-
-function updateCoinsInFirebase() {
-    console.log("Synchronizacja monet w Firebase...");
-    // Tutaj możesz dodać logikę aktualizacji w Firebase, jeśli jest potrzebna
-}
-
 // Funkcja do zapisywania postępu w Firebase i localStorage
 // Automatyczne zapisywanie nicka i coins do Firebase
 async function saveNickAndCoinsToFirebase(nick) {
@@ -498,39 +528,3 @@ function updateLeaderboard() {
 
 
 
-document.getElementById('foodTab').addEventListener('click', function() {
-    showSection('foodSection');
-});
-
-document.getElementById('helpersTab').addEventListener('click', function() {
-    showSection('helpersSection');
-});
-
-document.getElementById('skinsTab').addEventListener('click', function() {
-    showSection('skinsSection');
-});
-
-document.getElementById('songsTab').addEventListener('click', function() {
-    showSection('songsSection');
-});
-
-function showSection(sectionId) {
-    // Ukryj wszystkie sekcje
-    const sections = document.querySelectorAll('.tab-section');
-    sections.forEach(section => {
-        section.classList.remove('active');
-    });
-    // Pokaż wybraną sekcję
-    const section = document.getElementById(sectionId);
-    section.classList.add('active');
-}
-         
-// Sprawdzanie istnienia elementów przed przypisaniem zdarzenia
-document.addEventListener("DOMContentLoaded", () => {
-    const submitButton = document.getElementById("submitNick");
-    const nickInput = document.getElementById("playerNick");
-    if (!submitButton || !nickInput) {
-        console.error("Brak wymaganych elementów w DOM.");
-        return; // Zakończ, jeśli elementy nie istnieją
-
-    }
