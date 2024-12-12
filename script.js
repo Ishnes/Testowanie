@@ -78,7 +78,7 @@ let currentAudio = null;
 
 let currentSongId = null;
 
-
+let nickInput;
 
 // DOM Elements
 
