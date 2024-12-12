@@ -458,7 +458,9 @@ async function saveScoreToFirebase(nick, coins) {
         console.error("Nie udało się uzyskać adresu IP użytkownika.");
         return;
     }
-    const userRef = ref(db, `leaderboard/${userIP}`);
+    const sanitizedIP = userIP.replace(/\./g, '_'); // Zamień "." na "_"
+	const userRef = ref(db, `leaderboard/${sanitizedIP}`);
+
     update(userRef, { nick, coins })
         .then(() => console.log("Nick i wynik zapisano pomyślnie."))
         .catch((error) => {
@@ -472,7 +474,9 @@ async function updateCoinsInFirebase() {
         console.log("User IP:", userIP);
         console.log("Coins:", coins);
         if (userIP) {
-            const userRef = ref(db, `leaderboard/${userIP}`);
+            const sanitizedIP = userIP.replace(/\./g, '_');
+			const userRef = ref(db, `leaderboard/${sanitizedIP}`);
+
             await update(userRef, { coins });
             console.log("Coins zaktualizowane w Firebase");
         } else {
