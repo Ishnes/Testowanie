@@ -368,7 +368,25 @@ songs.forEach(song => {
     });
 });
 
+// Sprawdzanie istnienia elementów przed przypisaniem zdarzenia
+document.addEventListener("DOMContentLoaded", () => {
+    const submitButton = document.getElementById("submitNick");
+    const nickInput = document.getElementById("playerNick");
+    if (!submitButton || !nickInput) {
+        console.error("Brak wymaganych elementów w DOM.");
+        return; // Zakończ, jeśli elementy nie istnieją
 
+    }
+	submitButton.addEventListener("click", () => {
+
+        const nick = nickInput.value.trim();
+        if (!nick) {
+            alert("Podaj prawidłowy nick!");
+            return;
+        }
+        saveScoreToFirebase(nick, coins);
+    });
+});
 
 // Wywołanie automatycznego zapisu przy każdej zmianie coins
 function updateCoinDisplay() {
@@ -407,14 +425,16 @@ async function getUserIP() {
 // Funkcja do zapisywania postępu w Firebase i localStorage
 // Automatyczne zapisywanie nicka i coins do Firebase
 async function saveNickAndCoinsToFirebase(nick) {
-    const userIP = await getUserIP(); // Pobranie adresu IP użytkownika
+    const userIP = await getUserIP(); // Get the user IP
     if (userIP) {
-        const userRef = ref(db, `leaderboard/${userIP}`);
+        const sanitizedIP = userIP.replace(/\./g, '_'); // Replace "." with "_"
+        const userRef = ref(db, `leaderboard/${sanitizedIP}`);
         update(userRef, { nick, coins })
-            .then(() => console.log("Nick i coins zapisano w Firebase"))
-            .catch((error) => console.error("Błąd zapisu do Firebase:", error));
+            .then(() => console.log("Nick and coins saved to Firebase"))
+            .catch((error) => console.error("Error saving to Firebase:", error));
     }
 }
+
 
     // Automatyczny zapis wyniku co 10 sekund
     setInterval(() => {
@@ -484,24 +504,6 @@ function updateLeaderboard() {
 
 
          
-// Sprawdzanie istnienia elementów przed przypisaniem zdarzenia
-document.addEventListener("DOMContentLoaded", () => {
-    const submitButton = document.getElementById("submitNick");
-    const nickInput = document.getElementById("playerNick");
-    if (!submitButton || !nickInput) {
-        console.error("Brak wymaganych elementów w DOM.");
-        return; // Zakończ, jeśli elementy nie istnieją
 
-    }
-	submitButton.addEventListener("click", () => {
-
-        const nick = nickInput.value.trim();
-        if (!nick) {
-            alert("Podaj prawidłowy nick!");
-            return;
-        }
-        saveScoreToFirebase(nick, coins);
-    });
-});
 
 
