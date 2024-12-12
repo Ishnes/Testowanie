@@ -761,11 +761,12 @@ document.addEventListener("DOMContentLoaded", () => {
     submitButton.addEventListener("click", () => {
         const nick = nickInput.value.trim();
         if (!nick) {
-            alert("Please enter a valid nickname!");
+            alert("Proszę wprowadzić poprawny nick!");
             return;
         }
         saveScoreToFirebase(nick, coins);
     });
+    
 
     // Other initialization logic requiring nickInput
     setInterval(() => {
@@ -775,6 +776,7 @@ document.addEventListener("DOMContentLoaded", () => {
             lastSavedScore = coins;
         }
     }, 10000);
+    
 });
 
 
@@ -861,24 +863,22 @@ async function getUserIP() {
 // Automatyczne zapisywanie nicka i coins do Firebase
 
 async function saveNickAndCoinsToFirebase(nick) {
+    if (!nick || nick.trim() === "") {
+        console.warn("Nick jest pusty. Nie zapisuję zmian.");
+        return;
+    }
 
     const userIP = await getUserIP(); // Get the user IP
-
     if (userIP) {
-
         const sanitizedIP = userIP.replace(/\./g, '_'); // Replace "." with "_"
-
         const userRef = ref(db, `leaderboard/${sanitizedIP}`);
 
         update(userRef, { nick, coins })
-
             .then(() => console.log("Nick and coins saved to Firebase"))
-
             .catch((error) => console.error("Error saving to Firebase:", error));
-
     }
-
 }
+
 
 
 
