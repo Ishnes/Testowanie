@@ -839,25 +839,19 @@ async function getUserIP() {
 // Automatyczne zapisywanie nicka i coins do Firebase
 
 async function saveNickAndCoinsToFirebase(nick) {
-
-    const userIP = await getUserIP(); // Get the user IP
-
-    if (userIP) {
-
-        const sanitizedIP = userIP.replace(/\./g, '_'); // Replace "." with "_"
-
-        const userRef = ref(db, `leaderboard/${sanitizedIP}`);
-
-        update(userRef, { nick, coins })
-
-            .then(() => console.log("Nick and coins saved to Firebase"))
-
-            .catch((error) => console.error("Error saving to Firebase:", error));
-
+    if (!currentNick) {
+        console.error("Brak nicka do zapisania.");
+        return;
     }
-
+    const userIP = await getUserIP();
+    if (userIP) {
+        const sanitizedIP = userIP.replace(/\./g, '_');
+        const userRef = ref(db, `leaderboard/${sanitizedIP}`);
+        update(userRef, { nick: currentNick, coins })
+            .then(() => console.log("Nick and coins saved to Firebase"))
+            .catch((error) => console.error("Error saving to Firebase:", error));
+    }
 }
-
 
 
 
