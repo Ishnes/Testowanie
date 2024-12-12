@@ -747,40 +747,34 @@ songs.forEach(song => {
 // Sprawdzanie istnienia elementów przed przypisaniem zdarzenia
 
 document.addEventListener("DOMContentLoaded", () => {
-
     const submitButton = document.getElementById("submitNick");
-
     const nickInput = document.getElementById("playerNick");
 
+    // Ensure both elements exist before proceeding
     if (!submitButton || !nickInput) {
-
-        console.error("Brak wymaganych elementów w DOM.");
-
-        return; // Zakończ, jeśli elementy nie istnieją
-
-
-
+        console.error("Submit button or nick input is missing in the DOM.");
+        return;
     }
 
-	submitButton.addEventListener("click", () => {
-
-
-
+    submitButton.addEventListener("click", () => {
         const nick = nickInput.value.trim();
-
         if (!nick) {
-
-            alert("Podaj prawidłowy nick!");
-
+            alert("Please enter a valid nickname!");
             return;
-
         }
-
         saveScoreToFirebase(nick, coins);
-
     });
 
+    // Other initialization logic requiring nickInput
+    setInterval(() => {
+        const nick = nickInput.value.trim();
+        if (nick && coins !== lastSavedScore) {
+            saveScoreToFirebase(nick, coins);
+            lastSavedScore = coins;
+        }
+    }, 10000);
 });
+
 
 
 
