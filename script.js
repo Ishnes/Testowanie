@@ -71,8 +71,8 @@ function saveProgress() {
         activeHelpers,
         lastOnline: Date.now(),
     };
-    updateCoinsInFirebase();
-    // Zapis do localStorage
+    updateCoinsInFirebase(); // Zaktualizuj tylko coins
+    saveNickAndCoinsToFirebase(currentNick); // Zapisz nick i coins razem
     localStorage.setItem("buszkoClickerProgress", JSON.stringify(progress));
 }
 
