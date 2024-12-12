@@ -67,6 +67,7 @@ function saveProgress() {
         unlockedSkins,
         activeHelpers,
         lastOnline: Date.now(),
+		updateCoinsInFirebase()
     };
 
 // Save progress periodically to track the last online time
@@ -148,6 +149,7 @@ function clickBuszko() {
     coins += coinsPerClick; // Zwiększanie liczby coins o wartość coinsPerClick
     updateCoinDisplay();  // Aktualizowanie wyświetlania liczby coins
     saveProgress();  // Zapisz postęp gry
+	updateCoinsInFirebase();
 }
 
 // Apply a skin
@@ -436,23 +438,42 @@ async function saveNickAndCoinsToFirebase(nick) {
     // Inicjalizacja tablicy wyników
     updateLeaderboard();
 
-});
+
 
 // Funkcja do zapisywania wyniku w Firebase
 // Zapisuje nick i wynik (liczbę coins) w Firebase
-async function saveScoreToFirebase(nick, score) {
+async function saveScoreToFirebase(nick, coins) {
     const userIP = await getUserIP();
     if (!userIP) {
         console.error("Nie udało się uzyskać adresu IP użytkownika.");
         return;
     }
     const userRef = ref(db, `leaderboard/${userIP}`);
-    update(userRef, { nick, score })
+    update(userRef, { nick, coins })
         .then(() => console.log("Nick i wynik zapisano pomyślnie."))
         .catch((error) => {
             console.error("Błąd zapisu do Firebase:", error);
         });
 }
+
+async function updateCoinsInFirebase() {
+    try {
+        const userIP = await getUserIP();
+        console.log("User IP:", userIP);
+        console.log("Coins:", coins);
+        if (userIP) {
+            const userRef = ref(db, `leaderboard/${userIP}`);
+            await update(userRef, { coins });
+            console.log("Coins zaktualizowane w Firebase");
+        } else {
+            console.error("Nie udało się uzyskać adresu IP użytkownika");
+        }
+    } catch (error) {
+        console.error("Błąd aktualizacji coins w Firebase:", error);
+    }
+}
+
+
 
 // Funkcja do aktualizacji tablicy wyników
 function updateLeaderboard() {
@@ -463,10 +484,10 @@ function updateLeaderboard() {
         leaderboardTable.innerHTML = ""; // Wyczyść tabelę przed odświeżeniem
         const data = snapshot.val();
         if (data) {
-            const sortedData = Object.values(data).sort((a, b) => b.score - a.score);
+            const sortedData = Object.values(data).sort((a, b) => b.coins - a.coins);
             sortedData.forEach((entry) => {
                 const row = document.createElement("tr");
-                row.innerHTML = `<td>${entry.nick}</td><td>${entry.score}</td>`;
+                row.innerHTML = `<td>${entry.nick}</td><td>${entry.coins}</td>`;
                 leaderboardTable.appendChild(row);
             });
         }
@@ -475,22 +496,7 @@ function updateLeaderboard() {
 
 
 
-async function updateCoinsInFirebase() {
-    try {
-        const userIP = await getUserIP();
-        console.log("User IP:", userIP);
-        console.log("Coins:", coins);
-        if (userIP) {
-            const userRef = ref(db, `users/${userIP}/coins`);
-            await update(userRef, { coins });
-            console.log("Coins zaktualizowane w Firebase");
-        } else {
-            console.error("Nie udało się uzyskać adresu IP użytkownika");
-        }
-    } catch (error) {
-        console.error("Błąd aktualizacji coins w Firebase:", error);
-    }
-}
+
 
 document.getElementById('foodTab').addEventListener('click', function() {
     showSection('foodSection');
