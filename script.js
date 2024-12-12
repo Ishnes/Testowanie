@@ -70,6 +70,7 @@ function saveProgress() {
         unlockedSkins,
         activeHelpers,
         lastOnline: Date.now(),
+	nick: currentNick,
     };
     updateCoinsInFirebase(); // Zaktualizuj tylko coins
     saveNickAndCoinsToFirebase(currentNick); // Zapisz nick i coins razem
