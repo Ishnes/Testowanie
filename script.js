@@ -57,9 +57,11 @@ const songs = [
 ];
 
 // Upewnij się, że zapisujemy coins podczas zapisu stanu gry
-function saveProgress() {
+// Globalna zmienna na przechowywanie stanu gry
+let progress = {};
 
-    const progress = {
+function saveProgress() {
+    progress = {
         coins,
         baseCoinsPerClick,
         foodBuff,
@@ -67,11 +69,12 @@ function saveProgress() {
         unlockedSkins,
         activeHelpers,
         lastOnline: Date.now(),
-		
     };
-
-updateCoinsInFirebase();
+    updateCoinsInFirebase();
+    // Zapis do localStorage
+    localStorage.setItem("buszkoClickerProgress", JSON.stringify(progress));
 }
+
 // Save progress periodically to track the last online time
 setInterval(() => {
     saveProgress();
@@ -390,23 +393,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Wywołanie automatycznego zapisu przy każdej zmianie coins
 function updateCoinDisplay() {
-    // Sprawdzenie poprawności i zaokrąglenie wartości monet
+    // Aktualizacja wyświetlania liczby Buszonków
     const safeCoins = Number.isFinite(coins) ? Math.floor(coins) : 0;
     const safeCoinsPerClick = Number.isFinite(coinsPerClick) ? Math.floor(coinsPerClick) : 0;
-    // Aktualizacja wyświetlania tekstu
+
     coinDisplay.textContent = `Buszonki: ${safeCoins} (Buszonki na kliknięcie: ${safeCoinsPerClick})`;
-    // Pobranie nicku gracza z pola input
+
+    // Pobierz nick gracza
     const nickInput = document.getElementById("playerNick");
-    const nick = nickInput ? nickInput.value.trim() : "Unknown"; // Domyślny nick, jeśli brak danych
-    // Zapisanie danych do Firebase
+    const nick = nickInput ? nickInput.value.trim() : "Unknown";
+
+    // Zapis danych do Firebase
     saveNickAndCoinsToFirebase(nick);
-    // Zapisanie danych do localStorage
+
+    // Zapis danych do localStorage
     if (progress && typeof progress === 'object') {
         localStorage.setItem("buszkoClickerProgress", JSON.stringify(progress));
     } else {
         console.error('Niepoprawny obiekt progress:', progress);
     }
 }
+
 
 
 // Pobiera IP użytkownika (przykład za pomocą API ipify.org)
