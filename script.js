@@ -38,6 +38,7 @@ let activeHelpers = [false]; // Ensure this is initialized
 let lastSavedScore = 0;
 let currentAudio = null;
 let currentSongId = null;
+let currentNick = ""; // Przechowywany aktualny nick
 
 // DOM Elements
 const coinDisplay = document.querySelector('.coiny');
@@ -381,13 +382,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 	submitButton.addEventListener("click", () => {
-
-        const nick = nickInput.value.trim();
-        if (!nick) {
-            alert("Podaj prawidłowy nick!");
-            return;
-        }
-        saveScoreToFirebase(nick, coins);
+    const nick = nickInput.value.trim();
+    if (!nick) {
+        alert("Podaj prawidłowy nick!");
+        return;
+    }
+    currentNick = nick; // Zapisz nick do globalnej zmiennej
+    saveScoreToFirebase(nick, coins); // Zapisz nick i coins w Firebase
     });
 });
 
@@ -432,11 +433,15 @@ async function getUserIP() {
 // Funkcja do zapisywania postępu w Firebase i localStorage
 // Automatyczne zapisywanie nicka i coins do Firebase
 async function saveNickAndCoinsToFirebase(nick) {
-    const userIP = await getUserIP(); // Get the user IP
+    if (!currentNick) {
+        console.error("Brak nicka do zapisania.");
+        return;
+    }
+    const userIP = await getUserIP();
     if (userIP) {
-        const sanitizedIP = userIP.replace(/\./g, '_'); // Replace "." with "_"
+        const sanitizedIP = userIP.replace(/\./g, '_');
         const userRef = ref(db, `leaderboard/${sanitizedIP}`);
-        update(userRef, { nick, coins })
+        update(userRef, { nick: currentNick, coins })
             .then(() => console.log("Nick and coins saved to Firebase"))
             .catch((error) => console.error("Error saving to Firebase:", error));
     }
