@@ -104,7 +104,7 @@ const helperPrices = [125000, 500000];
 
 const helperEarnings = [0.02, 0.05]; // 10% of current Buszonki per click
 
-const nickInput = document.querySelector('#nickInput');
+const nickInput = document.querySelector('#playerNick');
 
 const songs = [
 
@@ -750,7 +750,7 @@ songs.forEach(song => {
 
 document.addEventListener("DOMContentLoaded", () => {
     const submitButton = document.getElementById("submitNick");
-    const nickInput = document.getElementById("nickInput");
+    const nickInput = document.getElementById("playerNick");
 
     // Ensure both elements exist before proceeding
     if (!submitButton || !nickInput) {
@@ -887,7 +887,7 @@ async function saveNickAndCoinsToFirebase(nick) {
     // Automatyczny zapis wyniku co 10 sekund
 
     document.addEventListener('DOMContentLoaded', () => {
-        const nickInput = document.querySelector('#nickInput');
+        const nickInput = document.querySelector('#playerNick');
     
         setInterval(() => {
             const nick = nickInput.value.trim();
