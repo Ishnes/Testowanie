@@ -78,7 +78,7 @@ let currentAudio = null;
 
 let currentSongId = null;
 
-let nickInput;
+
 
 // DOM Elements
 
@@ -103,6 +103,8 @@ const foodBuffs = [5, 25, 100, 444, 975, 1650];
 const helperPrices = [125000, 500000];
 
 const helperEarnings = [0.02, 0.05]; // 10% of current Buszonki per click
+
+const nickInput = document.querySelector('#nickInput');
 
 const songs = [
 
@@ -748,7 +750,7 @@ songs.forEach(song => {
 
 document.addEventListener("DOMContentLoaded", () => {
     const submitButton = document.getElementById("submitNick");
-    const nickInput = document.getElementById("playerNick");
+    const nickInput = document.getElementById("nickInput");
 
     // Ensure both elements exist before proceeding
     if (!submitButton || !nickInput) {
@@ -884,19 +886,19 @@ async function saveNickAndCoinsToFirebase(nick) {
 
     // Automatyczny zapis wyniku co 10 sekund
 
-    setInterval(() => {
-
-        const nick = nickInput.value.trim();
-
-        if (nick && coins !== lastSavedScore) {
-
-            saveScoreToFirebase(nick, coins);
-
-            lastSavedScore = coins;
-
-        }
-
-    }, 10000);
+    document.addEventListener('DOMContentLoaded', () => {
+        const nickInput = document.querySelector('#nickInput');
+    
+        setInterval(() => {
+            const nick = nickInput.value.trim();
+    
+            if (nick && coins !== lastSavedScore) {
+                saveScoreToFirebase(nick, coins);
+                lastSavedScore = coins;
+            }
+        }, 10000);
+    });
+    
 
 	
 
