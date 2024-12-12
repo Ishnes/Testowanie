@@ -78,7 +78,7 @@ let currentAudio = null;
 
 let currentSongId = null;
 
-
+let currentNick = ""; // Przechowywany aktualny nick
 
 // DOM Elements
 
@@ -746,40 +746,14 @@ songs.forEach(song => {
 
 // Sprawdzanie istnienia elementów przed przypisaniem zdarzenia
 
-document.addEventListener("DOMContentLoaded", () => {
-
-    const submitButton = document.getElementById("submitNick");
-
-    const nickInput = document.getElementById("playerNick");
-
-    if (!submitButton || !nickInput) {
-
-        console.error("Brak wymaganych elementów w DOM.");
-
-        return; // Zakończ, jeśli elementy nie istnieją
-
-
-
+submitButton.addEventListener("click", () => {
+    const nick = nickInput.value.trim();
+    if (!nick) {
+        alert("Podaj prawidłowy nick!");
+        return;
     }
-
-	submitButton.addEventListener("click", () => {
-
-
-
-        const nick = nickInput.value.trim();
-
-        if (!nick) {
-
-            alert("Podaj prawidłowy nick!");
-
-            return;
-
-        }
-
-        saveScoreToFirebase(nick, coins);
-
-    });
-
+    currentNick = nick; // Zapisz nick do globalnej zmiennej
+    saveScoreToFirebase(nick, coins); // Zapisz nick i coins w Firebase
 });
 
 
