@@ -78,7 +78,7 @@ let currentAudio = null;
 
 let currentSongId = null;
 
-let currentNick = ""; // Przechowywany aktualny nick
+
 
 // DOM Elements
 
@@ -123,19 +123,31 @@ let progress = {};
 
 
 function saveProgress() {
+
     progress = {
+
         coins,
+
         baseCoinsPerClick,
+
         foodBuff,
+
         currentSkin,
+
         unlockedSkins,
+
         activeHelpers,
+
         lastOnline: Date.now(),
-        nick: currentNick, // Dodaj nick do lokalnego stanu gry
+
     };
+
     updateCoinsInFirebase();
-    saveNickAndCoinsToFirebase(currentNick);
+
+    // Zapis do localStorage
+
     localStorage.setItem("buszkoClickerProgress", JSON.stringify(progress));
+
 }
 
 
@@ -163,9 +175,6 @@ function loadProgress() {
         const progress = JSON.parse(savedProgress);
 
         coins = progress.coins || 0;
-
-	currentNick = progress.nick || ""; // Wczytaj nick
-        nickInput.value = currentNick; // Ustaw nick w polu tekstowym
 
         baseCoinsPerClick = progress.baseCoinsPerClick || 1;
 
@@ -737,14 +746,40 @@ songs.forEach(song => {
 
 // Sprawdzanie istnienia elementów przed przypisaniem zdarzenia
 
-submitButton.addEventListener("click", () => {
-    const nick = nickInput.value.trim();
-    if (!nick) {
-        alert("Podaj prawidłowy nick!");
-        return;
+document.addEventListener("DOMContentLoaded", () => {
+
+    const submitButton = document.getElementById("submitNick");
+
+    const nickInput = document.getElementById("playerNick");
+
+    if (!submitButton || !nickInput) {
+
+        console.error("Brak wymaganych elementów w DOM.");
+
+        return; // Zakończ, jeśli elementy nie istnieją
+
+
+
     }
-    currentNick = nick; // Zapisz nick do globalnej zmiennej
-    saveScoreToFirebase(nick); // Zapisz nick i coins w Firebase
+
+	submitButton.addEventListener("click", () => {
+
+
+
+        const nick = nickInput.value.trim();
+
+        if (!nick) {
+
+            alert("Podaj prawidłowy nick!");
+
+            return;
+
+        }
+
+        saveScoreToFirebase(nick, coins);
+
+    });
+
 });
 
 
@@ -830,19 +865,25 @@ async function getUserIP() {
 // Automatyczne zapisywanie nicka i coins do Firebase
 
 async function saveNickAndCoinsToFirebase(nick) {
-    if (!currentNick) {
-        console.error("Brak nicka do zapisania.");
-        return;
-    }
-    const userIP = await getUserIP();
+
+    const userIP = await getUserIP(); // Get the user IP
+
     if (userIP) {
-        const sanitizedIP = userIP.replace(/\./g, '_');
+
+        const sanitizedIP = userIP.replace(/\./g, '_'); // Replace "." with "_"
+
         const userRef = ref(db, `leaderboard/${sanitizedIP}`);
-        update(userRef, { nick: currentNick, coins })
+
+        update(userRef, { nick, coins })
+
             .then(() => console.log("Nick and coins saved to Firebase"))
+
             .catch((error) => console.error("Error saving to Firebase:", error));
+
     }
+
 }
+
 
 
 
@@ -995,4 +1036,4 @@ function updateLeaderboard() {
 
 
 
-		
+	
