@@ -178,7 +178,7 @@ body {
 }
 
 .skin-item {
-    width:300px;
+    width: 300px;
     text-align: left;
     display: flex;
     flex-direction: column;
@@ -469,7 +469,7 @@ img
     background-color: #1e1e1e;
 }
 
-#playerNick {
+#nickInput {
     padding: 8px;
     margin-right: 10px;
 background-color: lightgray;
@@ -479,6 +479,8 @@ border: 1px solid #673ab7;
 #submitNick {
     padding: 8px;
     cursor: pointer;
+    border: 1px solid #673ab7;
+
 }
 
 
