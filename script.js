@@ -371,6 +371,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         saveScoreToFirebase(nick, coins);
     });
+});
     // Other initialization logic requiring nickInput
     setInterval(() => {
     const nick = nickInput.value.trim();
