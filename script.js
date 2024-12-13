@@ -323,8 +323,6 @@ songs.forEach(song => {
         }
     });
 });
-	let userId = null; // Globalna zmienna na ID użytkownika
-
     const auth = getAuth();
 	async function getGoogleUserId() {
     const provider = new GoogleAuthProvider();
