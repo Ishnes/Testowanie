@@ -47,6 +47,7 @@ const songs = [
 // Upewnij się, że zapisujemy coins podczas zapisu stanu gry
 // Globalna zmienna na przechowywanie stanu gry
 let progress = {};
+
 function saveProgress() {
     progress = {
         coins,
@@ -323,7 +324,8 @@ songs.forEach(song => {
     });
 });
 	let userId = null; // Globalna zmienna na ID użytkownika
-	const auth = getAuth();
+
+    const auth = getAuth();
 	async function getGoogleUserId() {
     const provider = new GoogleAuthProvider();
     try {
@@ -339,7 +341,9 @@ songs.forEach(song => {
         return null;
     }
 }
+
 document.getElementById('loginButton').addEventListener("click",getGoogleUserId);
+
 async function initializeAuth() {
     if (!userId) { // Logowanie tylko jeśli użytkownik nie jest zalogowany
         const provider = new GoogleAuthProvider();
