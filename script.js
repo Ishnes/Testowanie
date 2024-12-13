@@ -922,7 +922,7 @@ async function saveNickAndCoinsToFirebase(nick) {
 
 async function saveScoreToFirebase(nick, coins) {
 
-    const userId = await getuserId();
+    const userId = await getGoogleUserId();
 
     if (!userId) {
 
@@ -956,7 +956,7 @@ async function updateCoinsInFirebase() {
 
     try {
 
-        const userId = await getuserId();
+        const userId = await getGoogleUserId();
 
         console.log("User Id:", userId);
 
