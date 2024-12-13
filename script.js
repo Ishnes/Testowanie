@@ -4,7 +4,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebas
 
 import { getDatabase, ref, update, onValue, set } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
 
-
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
 
 // Konfiguracja Firebase
 
@@ -836,24 +836,26 @@ function updateCoinDisplay() {
 
 
 
-async function getUserIP() {
+const auth = getAuth();
+
+// Funkcja do zalogowania się przez Google i pobrania unikatowego ID użytkownika
+async function getGoogleUserId() {
+    const provider = new GoogleAuthProvider();
 
     try {
+        // Logowanie użytkownika przez Google
+        const result = await signInWithPopup(auth, provider);
+        
+        // Pobranie unikatowego ID użytkownika
+        const user = result.user;
+        console.log("Zalogowano jako:", user.displayName, "UID:", user.uid);
 
-        const response = await fetch('https://api.ipify.org?format=json');
-
-        const data = await response.json();
-
-        return data.ip;
-
+        // Zwrócenie unikatowego ID użytkownika
+        return user.uid;
     } catch (error) {
-
-        console.error('Nie udało się pobrać adresu IP:', error);
-
+        console.error("Błąd logowania przez Google:", error);
         return null;
-
     }
-
 }
 
 
@@ -863,20 +865,17 @@ async function getUserIP() {
 // Automatyczne zapisywanie nicka i coins do Firebase
 
 async function saveNickAndCoinsToFirebase(nick) {
-    if (!nick || nick.trim() === "") {
-        console.warn("Nick jest pusty. Nie zapisuję zmian.");
+    const userId = await getGoogleUserId(); // Pobranie unikatowego ID użytkownika Google
+    if (!userId) {
+        console.error("Nie udało się pobrać unikatowego ID użytkownika.");
         return;
     }
 
-    const userIP = await getUserIP(); // Get the user IP
-    if (userIP) {
-        const sanitizedIP = userIP.replace(/\./g, '_'); // Replace "." with "_"
-        const userRef = ref(db, `leaderboard/${sanitizedIP}`);
+    const userRef = ref(db, `leaderboard/${userId}`);
 
-        update(userRef, { nick, coins })
-            .then(() => console.log("Nick and coins saved to Firebase"))
-            .catch((error) => console.error("Error saving to Firebase:", error));
-    }
+    update(userRef, { nick, coins })
+        .then(() => console.log("Nick i coins zapisano pomyślnie w Firebase."))
+        .catch((error) => console.error("Błąd zapisu do Firebase:", error));
 }
 
 
