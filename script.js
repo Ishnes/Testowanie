@@ -860,6 +860,9 @@ async function getGoogleUserId() {
     }
 }
 
+document.getElementById('loginButton').addEventListener('click', getGoogleUserId);
+
+
 // Funkcja do zapisywania postępu w Firebase i localStorage
 
 // Automatyczne zapisywanie nicka i coins do Firebase
