@@ -836,32 +836,29 @@ function updateCoinDisplay() {
 
 
 
+
+
 const auth = getAuth();
-const provider = new GoogleAuthProvider();
 
-async function autoLogin() {
-    onAuthStateChanged(auth, async (user) => {
-        if (user) {
-            // Użytkownik jest już zalogowany
-            console.log("Zalogowany użytkownik:", user.displayName, "UID:", user.uid);
-        } else {
-            // Brak zalogowanego użytkownika, otwórz okno logowania
-            console.log("Brak zalogowanego użytkownika. Otwieram okno logowania...");
-            try {
-                const result = await signInWithPopup(auth, provider);
-                console.log("Zalogowano jako:", result.user.displayName, "UID:", result.user.uid);
-            } catch (error) {
-                console.error("Błąd logowania:", error);
-            }
-        }
-    });
+// Funkcja do zalogowania się przez Google i pobrania unikatowego ID użytkownika
+async function getGoogleUserId() {
+    const provider = new GoogleAuthProvider();
+
+    try {
+        // Logowanie użytkownika przez Google
+        const result = await signInWithPopup(auth, provider);
+        
+        // Pobranie unikatowego ID użytkownika
+        const user = result.user;
+        console.log("Zalogowano jako:", user.displayName, "UID:", user.uid);
+
+        // Zwrócenie unikatowego ID użytkownika
+        return user.uid;
+    } catch (error) {
+        console.error("Błąd logowania przez Google:", error);
+        return null;
+    }
 }
-
-// Wywołanie autoLogin przy załadowaniu strony
-window.onload = () => {
-    autoLogin();
-};
-
 
 // Funkcja do zapisywania postępu w Firebase i localStorage
 
