@@ -15,6 +15,7 @@ const firebaseConfig = {
 // Inicjalizacja Firebase
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+const auth = getAuth(app);
 // Zmienna globalna reprezentująca liczbę "Buszonków"
 // Variables to track game state
 let coins = 0;
