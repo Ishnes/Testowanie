@@ -645,8 +645,6 @@ function unlockSong(song) {
 
 }
 
-
-
 // Function to Play or Stop a Song
 
 function toggleSongPlayback(song) {
@@ -691,16 +689,8 @@ function toggleSongPlayback(song) {
 
         alert(`Odtwarzanie "${song.id}"!`);
 
-
-
     }
-
-
-
 }
-
-
-
 // Event Listeners - For UI Interaction
 
 songs.forEach(song => {
@@ -732,7 +722,6 @@ songs.forEach(song => {
     });
 
 });
-
 
 
 // Sprawdzanie istnienia elementów przed przypisaniem zdarzenia
@@ -767,10 +756,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 10000);
     
 });
-
-
-
-
 // Wywołanie automatycznego zapisu przy każdej zmianie coins
 
 function updateCoinDisplay() {
@@ -780,12 +765,7 @@ function updateCoinDisplay() {
     const safeCoins = Number.isFinite(coins) ? Math.floor(coins) : 0;
 
     const safeCoinsPerClick = Number.isFinite(coinsPerClick) ? Math.floor(coinsPerClick) : 0;
-
-
-
     coinDisplay.textContent = `Buszonki: ${safeCoins} (Buszonki na kliknięcie: ${safeCoinsPerClick})`;
-
-
 
     // Pobierz nick gracza
 
@@ -793,14 +773,9 @@ function updateCoinDisplay() {
 
     const nick = nickInput ? nickInput.value.trim() : "Unknown";
 
-
-
     // Zapis danych do Firebase
 
     saveNickAndCoinsToFirebase(nick);
-
-
-
     // Zapis danych do localStorage
 
     if (progress && typeof progress === 'object') {
@@ -814,23 +789,8 @@ function updateCoinDisplay() {
     }
 
 }
-
-
-
-
-
-
-
 // Pobiera IP użytkownika (przykład za pomocą API ipify.org)
-
-
-
-
-
-
-
 const auth = getAuth();
-
 // Funkcja do zalogowania się przez Google i pobrania unikatowego ID użytkownika
 async function getGoogleUserId() {
     const provider = new GoogleAuthProvider();
@@ -853,7 +813,6 @@ async function getGoogleUserId() {
 
 document.getElementById('loginButton').addEventListener('click', getGoogleUserId);
 
-
 // Funkcja do zapisywania postępu w Firebase i localStorage
 
 // Automatyczne zapisywanie nicka i coins do Firebase
@@ -871,12 +830,6 @@ async function saveNickAndCoinsToFirebase(nick) {
         .then(() => console.log("Nick i coins zapisano pomyślnie w Firebase."))
         .catch((error) => console.error("Błąd zapisu do Firebase:", error));
 }
-
-
-
-
-
-
     // Automatyczny zapis wyniku co 10 sekund
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -891,20 +844,8 @@ async function saveNickAndCoinsToFirebase(nick) {
             }
         }, 10000);
     });
-    
-
-	
-
     // Inicjalizacja tablicy wyników
-
     updateLeaderboard();
-
-
-
-
-
-
-
 // Funkcja do zapisywania wyniku w Firebase
 
 // Zapisuje nick i wynik (liczbę coins) w Firebase
@@ -938,8 +879,6 @@ async function saveScoreToFirebase(nick, coins) {
         });
 
 }
-
-
 
 async function updateCoinsInFirebase() {
 
@@ -976,9 +915,6 @@ async function updateCoinsInFirebase() {
     }
 
 }
-
-
-
 // Funkcja do aktualizacji tablicy wyników
 
 function updateLeaderboard() {
@@ -1014,15 +950,3 @@ function updateLeaderboard() {
     });
 
 }
-
-
-
-
-
-         
-
-
-
-
-
-	
