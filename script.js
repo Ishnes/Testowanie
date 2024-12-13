@@ -339,13 +339,12 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     // Other initialization logic requiring nickInput
     setInterval(() => {
-        const nick = nickInput.value.trim();
-        if (nick && coins !== lastSavedScore) {
-            saveScoreToFirebase(nick, coins);
-            lastSavedScore = coins;
-        }
-    }, 10000); 
-});
+    const nick = nickInput.value.trim();
+    if (nick && coins !== lastSavedScore) { // Zapis tylko jeśli monety się zmieniły
+        saveNickAndCoinsToFirebase(nick);
+        lastSavedScore = coins; // Aktualizuj ostatnio zapisany wynik
+    }
+}, 30000); // Zmiana na zapis co 30 sekund
 // Wywołanie automatycznego zapisu przy każdej zmianie coins
 function updateCoinDisplay() {
     // Aktualizacja wyświetlania liczby Buszonków
@@ -364,6 +363,22 @@ function updateCoinDisplay() {
         console.error('Niepoprawny obiekt progress:', progress);
     }
 }
+let userId = null; // Globalna zmienna na ID użytkownika
+async function initializeAuth() {
+    if (!userId) { // Logowanie tylko jeśli użytkownik nie jest zalogowany
+        const provider = new GoogleAuthProvider();
+        try {
+            const result = await signInWithPopup(auth, provider);
+            userId = result.user.uid; // Przechowaj ID użytkownika
+            console.log("Zalogowano jako:", result.user.displayName);
+        } catch (error) {
+            console.error("Błąd logowania:", error);
+        }
+    }
+}
+	document.addEventListener("DOMContentLoaded", async () => {
+    await initializeAuth(); // Zaloguj użytkownika przy uruchomieniu aplikacji
+});
 // Pobiera IP użytkownika (przykład za pomocą API ipify.org)
 const auth = getAuth();
 // Funkcja do zalogowania się przez Google i pobrania unikatowego ID użytkownika
@@ -386,17 +401,17 @@ document.getElementById('loginButton').addEventListener(getGoogleUserId);
 // Funkcja do zapisywania postępu w Firebase i localStorage
 // Automatyczne zapisywanie nicka i coins do Firebase
 async function saveNickAndCoinsToFirebase(nick) {
-    const userId = await getGoogleUserId(); // Pobranie unikatowego ID użytkownika Google
     if (!userId) {
-        console.error("Nie udało się pobrać unikatowego ID użytkownika.");
+        console.error("Użytkownik nie jest zalogowany.");
         return;
     }
-
     const userRef = ref(db, `leaderboard/${userId}`);
-
-    update(userRef, { nick, coins })
-        .then(() => console.log("Nick i coins zapisano pomyślnie w Firebase."))
-        .catch((error) => console.error("Błąd zapisu do Firebase:", error));
+    try {
+        await update(userRef, { nick, coins });
+        console.log("Nick i coins zapisano pomyślnie w Firebase.");
+    } catch (error) {
+        console.error("Błąd zapisu do Firebase:", error);
+    }
 }
     // Automatyczny zapis wyniku co 10 sekund
 
@@ -416,19 +431,18 @@ async function saveNickAndCoinsToFirebase(nick) {
     updateLeaderboard();
 // Funkcja do zapisywania wyniku w Firebase
 // Zapisuje nick i wynik (liczbę coins) w Firebase
-async function saveScoreToFirebase(nick, coins) {
-    const userId = await getGoogleUserId();
+async function saveScoreToFirebase(nick, score) {
     if (!userId) {
-        console.error("Nie udało się uzyskać adresu IP użytkownika.");
+        console.error("Użytkownik nie jest zalogowany.");
         return;
     }
-    const sanitizedId = userId.replace(/\./g, '_'); 
-	const userRef = ref(db, `leaderboard/${sanitizedId}`);
-    update(userRef, { nick, coins })
-        .then(() => console.log("Nick i wynik zapisano pomyślnie."))
-        .catch((error) => {
-            console.error("Błąd zapisu do Firebase:", error);
-        });
+    const userRef = ref(db, `leaderboard/${userId}`);
+    try {
+        await update(userRef, { nick, score });
+        console.log("Wynik zapisano pomyślnie w Firebase.");
+    } catch (error) {
+        console.error("Błąd zapisu wyniku do Firebase:", error);
+    }
 }
 async function updateCoinsInFirebase() {
     try {
