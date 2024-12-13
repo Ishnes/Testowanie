@@ -922,9 +922,9 @@ async function saveNickAndCoinsToFirebase(nick) {
 
 async function saveScoreToFirebase(nick, coins) {
 
-    const userIP = await getUserIP();
+    const userId = await getuserId();
 
-    if (!userIP) {
+    if (!userId) {
 
         console.error("Nie udało się uzyskać adresu IP użytkownika.");
 
@@ -932,9 +932,9 @@ async function saveScoreToFirebase(nick, coins) {
 
     }
 
-    const sanitizedIP = userIP.replace(/\./g, '_'); // Zamień "." na "_"
+    const sanitizedId = userId.replace(/\./g, '_'); 
 
-	const userRef = ref(db, `leaderboard/${sanitizedIP}`);
+	const userRef = ref(db, `leaderboard/${sanitizedId}`);
 
 
 
@@ -956,17 +956,17 @@ async function updateCoinsInFirebase() {
 
     try {
 
-        const userIP = await getUserIP();
+        const userId = await getuserId();
 
-        console.log("User IP:", userIP);
+        console.log("User Id:", userId);
 
         console.log("Coins:", coins);
 
-        if (userIP) {
+        if (userId) {
 
-            const sanitizedIP = userIP.replace(/\./g, '_');
+            const sanitizedId = userId.replace(/\./g, '_');
 
-			const userRef = ref(db, `leaderboard/${sanitizedIP}`);
+			const userRef = ref(db, `leaderboard/${sanitizedId}`);
 
 
 
@@ -976,7 +976,7 @@ async function updateCoinsInFirebase() {
 
         } else {
 
-            console.error("Nie udało się uzyskać adresu IP użytkownika");
+            console.error("Nie udało się uzyskać adresu Id użytkownika");
 
         }
 
