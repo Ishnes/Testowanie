@@ -838,29 +838,35 @@ function updateCoinDisplay() {
 
 
 
+
+
 const auth = getAuth();
+const provider = new GoogleAuthProvider();
 
-// Funkcja do zalogowania się przez Google i pobrania unikatowego ID użytkownika
 async function getGoogleUserId() {
-    const provider = new GoogleAuthProvider();
-
     try {
-        // Logowanie użytkownika przez Google
-        const result = await signInWithPopup(auth, provider);
-        
-        // Pobranie unikatowego ID użytkownika
-        const user = result.user;
-        console.log("Zalogowano jako:", user.displayName, "UID:", user.uid);
-
-        // Zwrócenie unikatowego ID użytkownika
-        return user.uid;
+        if (isMobile()) {
+            // Użyj przekierowania na urządzeniach mobilnych
+            await signInWithRedirect(auth, provider);
+        } else {
+            // Użyj pop-up dla desktopów
+            const result = await signInWithPopup(auth, provider);
+            const user = result.user;
+            console.log("Zalogowano jako:", user.displayName, "UID:", user.uid);
+            return user.uid;
+        }
     } catch (error) {
-        console.error("Błąd logowania przez Google:", error);
-        return null;
+        console.error("Błąd logowania:", error);
     }
 }
 
+function isMobile() {
+    return /Mobi|Android/i.test(navigator.userAgent);
+}
+
 document.getElementById('loginButton').addEventListener('click', getGoogleUserId);
+
+
 
 
 // Funkcja do zapisywania postępu w Firebase i localStorage
