@@ -323,37 +323,42 @@ songs.forEach(song => {
         }
     });
 });
-    const auth = getAuth();
-	async function getGoogleUserId() {
+
+document.getElementById('loginButton').addEventListener("click",getGoogleUserId);
+
+let userId = null; // Globalna zmienna do przechowywania stanu użytkownika
+
+// Funkcja do logowania użytkownika i pobierania jego UID
+async function getGoogleUserId() {
+    if (userId) return userId; // Jeśli już zalogowany, zwróć istniejący userId
     const provider = new GoogleAuthProvider();
     try {
-        // Logowanie użytkownika przez Google
-        const result = await signInWithPopup(auth, provider);      
-        // Pobranie unikatowego ID użytkownika
-        const user = result.user;
-        console.log("Zalogowano jako:", user.displayName, "UID:", user.uid);
-        // Zwrócenie unikatowego ID użytkownika
-        return user.uid;
+        const result = await signInWithPopup(auth, provider);
+        userId = result.user.uid; // Zapisz UID użytkownika
+        console.log("Zalogowano jako:", result.user.displayName, "UID:", userId);
+        return userId;
     } catch (error) {
         console.error("Błąd logowania przez Google:", error);
         return null;
     }
 }
 
-document.getElementById('loginButton').addEventListener("click",getGoogleUserId);
-
+// Funkcja do inicjalizacji logowania przy starcie
 async function initializeAuth() {
     if (!userId) { // Logowanie tylko jeśli użytkownik nie jest zalogowany
-        const provider = new GoogleAuthProvider();
         try {
-            const result = await signInWithPopup(auth, provider);
-            userId = result.user.uid; // Przechowaj ID użytkownika
-            console.log("Zalogowano jako:", result.user.displayName);
+            userId = await getGoogleUserId();
         } catch (error) {
-            console.error("Błąd logowania:", error);
+            console.error("Błąd podczas inicjalizacji autoryzacji:", error);
         }
     }
-}	
+}
+
+// Wywołaj `initializeAuth` przy załadowaniu DOM
+document.addEventListener("DOMContentLoaded", async () => {
+    await initializeAuth();
+});
+
 // Sprawdzanie istnienia elementów przed przypisaniem zdarzenia
 document.addEventListener("DOMContentLoaded", () => {
     const submitButton = document.getElementById("submitNick");
@@ -451,19 +456,17 @@ async function saveScoreToFirebase(nick, score) {
         console.error("Błąd zapisu wyniku do Firebase:", error);
     }
 }
+// Funkcja do aktualizacji coins w Firebase
 async function updateCoinsInFirebase() {
+    if (!userId) {
+        console.error("Użytkownik nie jest zalogowany.");
+        return;
+    }
     try {
-        const userId = await getGoogleUserId();
-        console.log("User Id:", userId);
-        console.log("Coins:", coins);
-        if (userId) {
-            const sanitizedId = userId.replace(/\./g, '_');
-			const userRef = ref(db, `leaderboard/${sanitizedId}`);
-            await update(userRef, { coins });
-            console.log("Coins zaktualizowane w Firebase");
-        } else {
-            console.error("Nie udało się uzyskać adresu Id użytkownika");
-        }
+        const sanitizedId = userId.replace(/\./g, '_');
+        const userRef = ref(db, `leaderboard/${sanitizedId}`);
+        await update(userRef, { coins });
+        console.log("Coins zaktualizowane w Firebase");
     } catch (error) {
         console.error("Błąd aktualizacji coins w Firebase:", error);
     }
