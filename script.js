@@ -5,15 +5,9 @@ import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstati
 // Konfiguracja Firebase
 const firebaseConfig = {
 
-
-
     apiKey: "AIzaSyBMPmNPLGHrBBU3d2DNgq1rutE5R5fBAWc",
 
-
-
     authDomain: "buszkoclicker.firebaseapp.com",
-
-
 
     databaseURL: "https://buszkoclicker-default-rtdb.europe-west1.firebasedatabase.app",
 
