@@ -464,8 +464,7 @@ async function updateCoinsInFirebase() {
         return;
     }
     try {
-        const sanitizedId = userId.replace(/\./g, '_');
-        const userRef = ref(db, `leaderboard/${sanitizedId}`);
+        const userRef = ref(db, `leaderboard/${userId}`);
         await update(userRef, { coins });
         console.log("Coins zaktualizowane w Firebase");
     } catch (error) {
