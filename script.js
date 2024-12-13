@@ -284,6 +284,7 @@ function unlockSong(song) {
     }
 }
 // Function to Play or Stop a Song
+// Function to Play or Stop a Song
 function toggleSongPlayback(song) {
     if (!song.unlocked) {
         alert("Musisz najpierw odblokować to");
@@ -306,6 +307,7 @@ function toggleSongPlayback(song) {
         currentSongId = song.id;
         alert(`Odtwarzanie "${song.id}"!`);
     }
+}
 // Event Listeners - For UI Interaction
 songs.forEach(song => {
     const songImage = document.getElementById(song.id);
