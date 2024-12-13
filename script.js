@@ -202,276 +202,133 @@ foodItems.forEach((foodItem, index) => {
             foodBuff += foodBuffs[index] * quantity; // Apply the food buff multiplied by the quantity
             calculateCoinsPerClick(); // Recalculate the coins per click
             alert(`Nakarmiłeś Buszona! Dostajesz więcej Buszonków: ${foodBuffs[index] * quantity}.`);
-
             updateCoinDisplay();
-
             saveProgress();
-
             updateMaxQuantity(); // Update the max quantity after purchase
-
         } else {
-
             alert(`Nie masz wystarczająco Buszonków, żeby to kupić!`);
-
         }
-
     });
-
 });
-
-
-
 // Event listener for Buszko click
-
 clickerImage.addEventListener('click', clickBuszko);
-
-
-
 // Event listener for Reset Button
-
 resetButton.addEventListener('click', resetProgress);
-
-
-
 // Start a helper's autoclick
-
 function startHelper(index) {
-
     setInterval(() => {
-
         if (activeHelpers[index]) {
-
             const earnings = coinsPerClick * helperEarnings[index];
-
             coins += earnings;
-
             updateCoinDisplay();
-
             saveProgress(); // Save progress regularly
-
         }
-
     }, 1000); // Autoclick every second
-
 }
-
-
-
 // Purchase a helper
-
 function purchaseHelper(index) {
-
     if (coins >= helperPrices[index] && !activeHelpers[index]) {
-
         coins -= helperPrices[index];
-
         activeHelpers[index] = true;
-
         const helperDisplay = document.getElementById(`helperDisplay${index + 1}`);
-
         if (helperDisplay) {
-
             helperDisplay.classList.remove('hidden');
-
         }
-
         startHelper(index);
-
         alert("Pomocnik kupiony!");
-
         updateCoinDisplay();
-
         saveProgress(); // Save state after purchase
-
     } else if (activeHelpers[index]) {
-
         alert("Już masz tego pomocnika!");
-
     } else {
-
         alert("Nie masz wystarczająco Buszonków na tego pomocnika!");
-
     }
-
 }
-
-
-
 // Show helper displays only if they exist
-
 activeHelpers.forEach((isActive, index) => {
-
     const helperDisplay = document.getElementById(`helperDisplay${index + 1}`);
-
     if (helperDisplay && isActive) {
-
         helperDisplay.classList.remove('hidden');
-
     }
-
 });
-
-
-
 // Add event listeners for helpers
-
 document.querySelectorAll('.helper-item').forEach((helperItem, index) => {
-
     helperItem.addEventListener('click', () => purchaseHelper(index));
-
 });
-
-
-
 // Function to Update the UI for Locked/Unlocked Songs
-
 function updateSongUI(song) {
-
     const songImage = document.getElementById(song.id);
-
     if (song.unlocked) {
-
         songImage.classList.remove('locked');
-
         songImage.classList.add('unlocked');
-
         songImage.title = "Kliknij żeby odtworzyć";
-
     } else {
-
         songImage.classList.remove('unlocked');
-
         songImage.classList.add('locked');
-
         songImage.title = `Locked: ${song.cost} Buszonki`;
-
     }
-
 }
-
-
-
 // Function to Unlock Songs
-
 function unlockSong(song) {
-
     if (coins >= song.cost && !song.unlocked) {
-
         coins -= song.cost;
-
         song.unlocked = true;
-
         updateSongUI(song);
-
         alert(`Odblokowałeś "${song.id}"!`);
-
         updateCoinDisplay();
-
         saveProgress();
-
     } else if (song.unlocked) {
-
         alert("Już odblokowałeś tę piosenkę!");
-
     } else {
-
         alert("Nie masz wystarczająco Buszonków, żeby odblokować!");
-
     }
-
 }
-
 // Function to Play or Stop a Song
-
 function toggleSongPlayback(song) {
-
     if (!song.unlocked) {
-
         alert("Musisz najpierw odblokować to");
-
         return;
-
     }
-
     if (currentAudio && currentSongId === song.id) {
-
         currentAudio.pause();
-
         currentAudio.currentTime = 0;
-
         currentAudio = null;
-
         currentSongId = null;
-
         alert(`Zatrzymano "${song.id}".`);
-
     } else {
-
         if (currentAudio) {
-
             currentAudio.pause();
-
             currentAudio.currentTime = 0;
-
         }
-
         currentAudio = new Audio(song.src);
-
         currentAudio.loop = true;
-
         currentAudio.play();
-
         currentSongId = song.id;
-
         alert(`Odtwarzanie "${song.id}"!`);
-
     }
-}
 // Event Listeners - For UI Interaction
-
 songs.forEach(song => {
-
     const songImage = document.getElementById(song.id);
-
-
-
     // Update initial locked/unlocked state on page load
-
     updateSongUI(song);
-
-
-
     // Handle click events for unlocking or toggling playback
-
     songImage.addEventListener('click', () => {
-
         if (!song.unlocked) {
-
             unlockSong(song);
-
         } else {
-
             toggleSongPlayback(song);
-
         }
-
     });
-
 });
-
-
 // Sprawdzanie istnienia elementów przed przypisaniem zdarzenia
-
 document.addEventListener("DOMContentLoaded", () => {
     const submitButton = document.getElementById("submitNick");
     const nickInput = document.getElementById("playerNick");
-
     // Ensure both elements exist before proceeding
     if (!submitButton || !nickInput) {
         console.error("Submit button or nick input is missing in the DOM.");
         return;
     }
-
     submitButton.addEventListener("click", () => {
         const nick = nickInput.value.trim();
         if (!nick) {
@@ -480,8 +337,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         saveScoreToFirebase(nick, coins);
     });
-    
-
     // Other initialization logic requiring nickInput
     setInterval(() => {
         const nick = nickInput.value.trim();
@@ -489,56 +344,37 @@ document.addEventListener("DOMContentLoaded", () => {
             saveScoreToFirebase(nick, coins);
             lastSavedScore = coins;
         }
-    }, 10000);
-    
+    }, 10000); 
 });
 // Wywołanie automatycznego zapisu przy każdej zmianie coins
-
 function updateCoinDisplay() {
-
     // Aktualizacja wyświetlania liczby Buszonków
-
     const safeCoins = Number.isFinite(coins) ? Math.floor(coins) : 0;
-
     const safeCoinsPerClick = Number.isFinite(coinsPerClick) ? Math.floor(coinsPerClick) : 0;
     coinDisplay.textContent = `Buszonki: ${safeCoins} (Buszonki na kliknięcie: ${safeCoinsPerClick})`;
-
     // Pobierz nick gracza
-
     const nickInput = document.getElementById("playerNick");
-
     const nick = nickInput ? nickInput.value.trim() : "Unknown";
-
     // Zapis danych do Firebase
-
     saveNickAndCoinsToFirebase(nick);
     // Zapis danych do localStorage
-
     if (progress && typeof progress === 'object') {
-
         localStorage.setItem("buszkoClickerProgress", JSON.stringify(progress));
-
     } else {
-
         console.error('Niepoprawny obiekt progress:', progress);
-
     }
-
 }
 // Pobiera IP użytkownika (przykład za pomocą API ipify.org)
 const auth = getAuth();
 // Funkcja do zalogowania się przez Google i pobrania unikatowego ID użytkownika
 async function getGoogleUserId() {
     const provider = new GoogleAuthProvider();
-
     try {
         // Logowanie użytkownika przez Google
-        const result = await signInWithPopup(auth, provider);
-        
+        const result = await signInWithPopup(auth, provider);      
         // Pobranie unikatowego ID użytkownika
         const user = result.user;
         console.log("Zalogowano jako:", user.displayName, "UID:", user.uid);
-
         // Zwrócenie unikatowego ID użytkownika
         return user.uid;
     } catch (error) {
@@ -546,13 +382,9 @@ async function getGoogleUserId() {
         return null;
     }
 }
-
 document.getElementById('loginButton').addEventListener(getGoogleUserId);
-
 // Funkcja do zapisywania postępu w Firebase i localStorage
-
 // Automatyczne zapisywanie nicka i coins do Firebase
-
 async function saveNickAndCoinsToFirebase(nick) {
     const userId = await getGoogleUserId(); // Pobranie unikatowego ID użytkownika Google
     if (!userId) {
@@ -583,106 +415,53 @@ async function saveNickAndCoinsToFirebase(nick) {
     // Inicjalizacja tablicy wyników
     updateLeaderboard();
 // Funkcja do zapisywania wyniku w Firebase
-
 // Zapisuje nick i wynik (liczbę coins) w Firebase
-
 async function saveScoreToFirebase(nick, coins) {
-
     const userId = await getGoogleUserId();
-
     if (!userId) {
-
         console.error("Nie udało się uzyskać adresu IP użytkownika.");
-
         return;
-
     }
-
     const sanitizedId = userId.replace(/\./g, '_'); 
-
 	const userRef = ref(db, `leaderboard/${sanitizedId}`);
-
-
-
     update(userRef, { nick, coins })
-
         .then(() => console.log("Nick i wynik zapisano pomyślnie."))
-
         .catch((error) => {
-
             console.error("Błąd zapisu do Firebase:", error);
-
         });
-
 }
-
 async function updateCoinsInFirebase() {
-
     try {
-
         const userId = await getGoogleUserId();
-
         console.log("User Id:", userId);
-
         console.log("Coins:", coins);
-
         if (userId) {
-
             const sanitizedId = userId.replace(/\./g, '_');
-
 			const userRef = ref(db, `leaderboard/${sanitizedId}`);
-
-
-
             await update(userRef, { coins });
-
             console.log("Coins zaktualizowane w Firebase");
-
         } else {
-
             console.error("Nie udało się uzyskać adresu Id użytkownika");
-
         }
-
     } catch (error) {
-
         console.error("Błąd aktualizacji coins w Firebase:", error);
-
     }
-
 }
 // Funkcja do aktualizacji tablicy wyników
-
 function updateLeaderboard() {
-
     const leaderboardRef = ref(db, "leaderboard");
-
     onValue(leaderboardRef, (snapshot) => {
-
         const leaderboardTable = document.querySelector("#leaderboardTable tbody");
-
         if (!leaderboardTable) return;
-
         leaderboardTable.innerHTML = ""; // Wyczyść tabelę przed odświeżeniem
-
         const data = snapshot.val();
-
         if (data) {
-
             const sortedData = Object.values(data).sort((a, b) => b.coins - a.coins);
-
             sortedData.forEach((entry) => {
-
                 const row = document.createElement("tr");
-
                 row.innerHTML = `<td>${entry.nick}</td><td>${entry.coins}</td>`;
-
                 leaderboardTable.appendChild(row);
-
             });
-
         }
-
     });
-
 }
