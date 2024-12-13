@@ -320,6 +320,36 @@ songs.forEach(song => {
         }
     });
 });
+	let userId = null; // Globalna zmienna na ID użytkownika
+	const auth = getAuth();
+	async function getGoogleUserId() {
+    const provider = new GoogleAuthProvider();
+    try {
+        // Logowanie użytkownika przez Google
+        const result = await signInWithPopup(auth, provider);      
+        // Pobranie unikatowego ID użytkownika
+        const user = result.user;
+        console.log("Zalogowano jako:", user.displayName, "UID:", user.uid);
+        // Zwrócenie unikatowego ID użytkownika
+        return user.uid;
+    } catch (error) {
+        console.error("Błąd logowania przez Google:", error);
+        return null;
+    }
+}
+document.getElementById('loginButton').addEventListener("click",getGoogleUserId);
+async function initializeAuth() {
+    if (!userId) { // Logowanie tylko jeśli użytkownik nie jest zalogowany
+        const provider = new GoogleAuthProvider();
+        try {
+            const result = await signInWithPopup(auth, provider);
+            userId = result.user.uid; // Przechowaj ID użytkownika
+            console.log("Zalogowano jako:", result.user.displayName);
+        } catch (error) {
+            console.error("Błąd logowania:", error);
+        }
+    }
+}	
 // Sprawdzanie istnienia elementów przed przypisaniem zdarzenia
 document.addEventListener("DOMContentLoaded", () => {
     const submitButton = document.getElementById("submitNick");
@@ -363,41 +393,13 @@ function updateCoinDisplay() {
         console.error('Niepoprawny obiekt progress:', progress);
     }
 }
-let userId = null; // Globalna zmienna na ID użytkownika
-async function initializeAuth() {
-    if (!userId) { // Logowanie tylko jeśli użytkownik nie jest zalogowany
-        const provider = new GoogleAuthProvider();
-        try {
-            const result = await signInWithPopup(auth, provider);
-            userId = result.user.uid; // Przechowaj ID użytkownika
-            console.log("Zalogowano jako:", result.user.displayName);
-        } catch (error) {
-            console.error("Błąd logowania:", error);
-        }
-    }
-}
 	document.addEventListener("DOMContentLoaded", async () => {
     await initializeAuth(); // Zaloguj użytkownika przy uruchomieniu aplikacji
 });
 // Pobiera IP użytkownika (przykład za pomocą API ipify.org)
-const auth = getAuth();
+
 // Funkcja do zalogowania się przez Google i pobrania unikatowego ID użytkownika
-async function getGoogleUserId() {
-    const provider = new GoogleAuthProvider();
-    try {
-        // Logowanie użytkownika przez Google
-        const result = await signInWithPopup(auth, provider);      
-        // Pobranie unikatowego ID użytkownika
-        const user = result.user;
-        console.log("Zalogowano jako:", user.displayName, "UID:", user.uid);
-        // Zwrócenie unikatowego ID użytkownika
-        return user.uid;
-    } catch (error) {
-        console.error("Błąd logowania przez Google:", error);
-        return null;
-    }
-}
-document.getElementById('loginButton').addEventListener("click",getGoogleUserId);
+
 // Funkcja do zapisywania postępu w Firebase i localStorage
 // Automatyczne zapisywanie nicka i coins do Firebase
 async function saveNickAndCoinsToFirebase(nick) {
