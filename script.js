@@ -328,7 +328,7 @@ songs.forEach(song => {
     });
 });
 
-document.getElementById('loginButton').addEventListener("click",getGoogleUserId);
+
 
 
 
@@ -354,7 +354,7 @@ async function getGoogleUserId() {
     }
 }
 
-
+document.getElementById('loginButton').addEventListener("click",getGoogleUserId);
 
 // Funkcja do inicjalizacji logowania przy starcie
 async function initializeAuth() {
