@@ -332,8 +332,12 @@ let userId = null; // Globalna zmienna do przechowywania stanu użytkownika
 // Funkcja do logowania użytkownika i pobierania jego UID
 
 
+let isLoggingIn = false;
+
 async function getGoogleUserId() {
-    if (userId) return userId; // Jeśli już zalogowany, zwróć istniejący userId
+    if (isLoggingIn) return; // Zablokuj kolejne wywołania
+    isLoggingIn = true;
+
     const provider = new GoogleAuthProvider();
     try {
         const result = await signInWithPopup(auth, provider);
@@ -342,9 +346,11 @@ async function getGoogleUserId() {
         return userId;
     } catch (error) {
         console.error("Błąd logowania przez Google:", error);
-        return null;
+    } finally {
+        isLoggingIn = false; // Odblokuj po zakończeniu
     }
 }
+
 
 
 // Funkcja do inicjalizacji logowania przy starcie
