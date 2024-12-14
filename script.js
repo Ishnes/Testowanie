@@ -422,13 +422,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
     // Other initialization logic requiring nickInput
-    setInterval(() => {
-    const nick = nickInput.value.trim();
-    if (nick && coins !== lastSavedScore) { // Zapis tylko jeśli monety się zmieniły
-        saveNickAndCoinsToFirebase(nick);
-        lastSavedScore = coins; // Aktualizuj ostatnio zapisany wynik
-    }
-}, 30000); // Zmiana na zapis co 30 sekund
+     // Zmiana na zapis co 30 sekund
 // Wywołanie automatycznego zapisu przy każdej zmianie coins
 function updateCoinDisplay() {
     // Aktualizacja wyświetlania liczby Buszonków
