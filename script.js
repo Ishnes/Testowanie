@@ -330,8 +330,13 @@ document.getElementById('loginButton').addEventListener("click",getGoogleUserId)
 let userId = null; // Globalna zmienna do przechowywania stanu użytkownika
 
 // Funkcja do logowania użytkownika i pobierania jego UID
+let isLoggingIn = false; // Flaga kontrolująca proces logowania
+
 async function getGoogleUserId() {
-    if (userId) return userId; // Jeśli już zalogowany, zwróć istniejący userId
+    if (userId) return userId; // Jeśli użytkownik już zalogowany, zwróć jego UID
+    if (isLoggingIn) return; // Jeśli logowanie już trwa, ignoruj kolejne wywołania
+    isLoggingIn = true; // Ustaw flagę na true
+
     const provider = new GoogleAuthProvider();
     try {
         const result = await signInWithPopup(auth, provider);
@@ -341,8 +346,11 @@ async function getGoogleUserId() {
     } catch (error) {
         console.error("Błąd logowania przez Google:", error);
         return null;
+    } finally {
+        isLoggingIn = false; // Zresetuj flagę po zakończeniu logowania
     }
 }
+
 
 // Funkcja do inicjalizacji logowania przy starcie
 async function initializeAuth() {
