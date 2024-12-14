@@ -1,7 +1,7 @@
 // Import Firebase SDK
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
 import { getDatabase, ref, update, onValue, set } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
+import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
 // Konfiguracja Firebase
 const firebaseConfig = {
     apiKey: "AIzaSyBMPmNPLGHrBBU3d2DNgq1rutE5R5fBAWc",
@@ -382,6 +382,26 @@ loginButton.addEventListener("click", async () => {
         alert("Logowanie nie powiodło się. Spróbuj ponownie.");
     }
 });
+
+// Funkcja wylogowująca użytkownika
+async function logoutUser() {
+    try {
+        await signOut(auth); // Wylogowanie użytkownika z Firebase Auth
+        userId = null; // Resetuj globalne userId
+        userInfoDisplay.innerHTML = ""; // Wyczyść informacje o użytkowniku z UI
+        console.log("Wylogowano pomyślnie.");
+        alert("Zostałeś wylogowany.");
+    } catch (error) {
+        console.error("Błąd wylogowania:", error);
+        alert("Nie udało się wylogować. Spróbuj ponownie.");
+    }
+}
+
+const logoutButton = document.getElementById("logoutButton");
+
+// Podłączanie funkcji do kliknięcia przycisku
+logoutButton.addEventListener("click", logoutUser);
+
 
 // Sprawdzanie istnienia elementów przed przypisaniem zdarzenia
 document.addEventListener("DOMContentLoaded", () => {
