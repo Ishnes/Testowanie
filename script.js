@@ -1,7 +1,7 @@
 // Import Firebase SDK
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
 import { getDatabase, ref, update, onValue, set } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
-import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
+import { getAuth, signInWithPopup, GoogleAuthProvider} from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
 // Konfiguracja Firebase
 const firebaseConfig = {
     apiKey: "AIzaSyBMPmNPLGHrBBU3d2DNgq1rutE5R5fBAWc",
@@ -330,13 +330,10 @@ document.getElementById('loginButton').addEventListener("click",getGoogleUserId)
 let userId = null; // Globalna zmienna do przechowywania stanu użytkownika
 
 // Funkcja do logowania użytkownika i pobierania jego UID
-let isLoggingIn = false; // Flaga kontrolująca proces logowania
+
 
 async function getGoogleUserId() {
-    if (userId) return userId; // Jeśli użytkownik już zalogowany, zwróć jego UID
-    if (isLoggingIn) return; // Jeśli logowanie już trwa, ignoruj kolejne wywołania
-    isLoggingIn = true; // Ustaw flagę na true
-
+    if (userId) return userId; // Jeśli już zalogowany, zwróć istniejący userId
     const provider = new GoogleAuthProvider();
     try {
         const result = await signInWithPopup(auth, provider);
@@ -346,8 +343,6 @@ async function getGoogleUserId() {
     } catch (error) {
         console.error("Błąd logowania przez Google:", error);
         return null;
-    } finally {
-        isLoggingIn = false; // Zresetuj flagę po zakończeniu logowania
     }
 }
 
@@ -391,24 +386,10 @@ loginButton.addEventListener("click", async () => {
     }
 });
 
-// Funkcja wylogowująca użytkownika
-async function logoutUser() {
-    try {
-        await signOut(auth); // Wylogowanie użytkownika z Firebase Auth
-        userId = null; // Resetuj globalne userId
-        userInfoDisplay.innerHTML = ""; // Wyczyść informacje o użytkowniku z UI
-        console.log("Wylogowano pomyślnie.");
-        alert("Zostałeś wylogowany.");
-    } catch (error) {
-        console.error("Błąd wylogowania:", error);
-        alert("Nie udało się wylogować. Spróbuj ponownie.");
-    }
-}
 
-const logoutButton = document.getElementById("logoutButton");
 
 // Podłączanie funkcji do kliknięcia przycisku
-logoutButton.addEventListener("click", logoutUser);
+
 
 
 // Sprawdzanie istnienia elementów przed przypisaniem zdarzenia
