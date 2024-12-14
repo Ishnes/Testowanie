@@ -360,6 +360,29 @@ document.addEventListener("DOMContentLoaded", async () => {
     await initializeAuth();
 });
 
+// DOM elements
+const loginButton = document.getElementById("loginButton");
+const userInfoDisplay = document.getElementById("userInfo");
+
+// Obsługa logowania użytkownika
+loginButton.addEventListener("click", async () => {
+    const provider = new GoogleAuthProvider();
+
+    try {
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+
+        // Wyświetl nazwę i zdjęcie użytkownika
+        userInfoDisplay.innerHTML = `
+            <p>Witaj, ${user.displayName}!</p>
+            <img src="${user.photoURL}" alt="Zdjęcie profilowe" style="width: 100px; height: 100px; border-radius: 50%;">
+        `;
+    } catch (error) {
+        console.error("Błąd logowania przez Google:", error);
+        alert("Logowanie nie powiodło się. Spróbuj ponownie.");
+    }
+});
+
 // Sprawdzanie istnienia elementów przed przypisaniem zdarzenia
 document.addEventListener("DOMContentLoaded", () => {
     const submitButton = document.getElementById("submitNick");
