@@ -703,7 +703,7 @@ async function initializeAuth() {
 
 
 
-document.getElementById('loginButton').addEventListener("click", getGoogleUserId);
+document.getElementById('loginButton').addEventListener("click", getGoogleUserId, initializeAuth);
 
 localStorage.setItem("userId", userId);
 
@@ -907,37 +907,18 @@ async function saveScoreToFirebase(nick, score) {
 }
 
 async function updateCoinsInFirebase() {
-
-    try {
-
-        const userId = await getGoogleUserId();
-
-        console.log("User Id:", userId);
-
-        console.log("Coins:", coins);
-
-        if (userId) {
-
-            const sanitizedId = userId.replace(/\./g, '_');
-
-			const userRef = ref(db, `leaderboard/${sanitizedId}`);
-
-            await update(userRef, { coins });
-
-            console.log("Coins zaktualizowane w Firebase");
-
-        } else {
-
-            console.error("Nie udało się uzyskać adresu Id użytkownika");
-
-        }
-
-    } catch (error) {
-
-        console.error("Błąd aktualizacji coins w Firebase:", error);
-
+    if (!userId) {
+        console.error("Użytkownik nie jest zalogowany.");
+        return;
     }
-
+    try {
+        const sanitizedId = userId.replace(/\./g, '_');
+        const userRef = ref(db, `leaderboard/${sanitizedId}`);
+        await update(userRef, { coins });
+        console.log("Coins zaktualizowane w Firebase");
+    } catch (error) {
+        console.error("Błąd aktualizacji coins w Firebase:", error);
+    }
 }
 
 // Funkcja do aktualizacji tablicy wyników
