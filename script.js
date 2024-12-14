@@ -331,7 +331,7 @@ document.getElementById('loginButton').addEventListener("click",getGoogleUserId)
 
 // Funkcja do logowania użytkownika i pobierania jego UID
 
-
+let userId = null;
 let isLoggingIn = false;
 
 async function getGoogleUserId() {
