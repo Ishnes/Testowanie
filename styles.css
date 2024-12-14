@@ -471,16 +471,32 @@ img
 
 #playerNick {
     padding: 8px;
-    margin-right: 10px;
-background-color: lightgray;
+    margin: 10px;
+    color: lightgray;
 border: 1px solid #673ab7;
+background-color: #1e1e1e;
 }
 
 #submitNick {
     padding: 8px;
     cursor: pointer;
     border: 1px solid #673ab7;
+    background-color: #1e1e1e;
+    color: lightgray;
 
 }
 
+.log
+{
+    padding: 8px;
+    margin: 9px;
+    cursor: pointer;
+    border: 1px solid #673ab7;
+    background-color: #1e1e1e;
+    color: lightgray;
+}
 
+#loginButton
+{
+    width: 179.33px;
+}
