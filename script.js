@@ -327,7 +327,7 @@ songs.forEach(song => {
 
 document.getElementById('loginButton').addEventListener("click",getGoogleUserId);
 
-let userId = null; // Globalna zmienna do przechowywania stanu użytkownika
+
 
 // Funkcja do logowania użytkownika i pobierania jego UID
 
