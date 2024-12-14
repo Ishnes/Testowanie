@@ -684,35 +684,39 @@ songs.forEach(song => {
 
 }
 
-
-
-document.getElementById('loginButton').addEventListener("click",getGoogleUserId);
-
-
-
 async function initializeAuth() {
-
-    if (!userId) { // Logowanie tylko jeśli użytkownik nie jest zalogowany
-
+    if (!userId) {
         const provider = new GoogleAuthProvider();
-
         try {
-
             const result = await signInWithPopup(auth, provider);
-
-            userId = result.user.uid; // Przechowaj ID użytkownika
-
+            userId = result.user.uid;
             console.log("Zalogowano jako:", result.user.displayName);
-
         } catch (error) {
-
             console.error("Błąd logowania:", error);
-
         }
-
     }
+}
 
-}	
+
+
+
+
+
+
+document.getElementById('loginButton').addEventListener("click", getGoogleUserId);
+
+localStorage.setItem("userId", userId);
+
+document.addEventListener("DOMContentLoaded", () => {
+    const savedUserId = localStorage.getItem("userId");
+    if (savedUserId) {
+        userId = savedUserId; // Ustaw zapamiętane ID
+        console.log("Użytkownik już zalogowany:", userId);
+    } else {
+        console.log("Użytkownik nie jest zalogowany. Wymagane logowanie.");
+    }
+});
+
 
 // Sprawdzanie istnienia elementów przed przypisaniem zdarzenia
 
@@ -800,11 +804,7 @@ function updateCoinDisplay() {
 
 }
 
-	document.addEventListener("DOMContentLoaded", async () => {
-
-    await initializeAuth(); // Zaloguj użytkownika przy uruchomieniu aplikacji
-
-});
+	
 
 // Pobiera IP użytkownika (przykład za pomocą API ipify.org)
 
