@@ -49,6 +49,7 @@ const songs = [
 // Globalna zmienna na przechowywanie stanu gry
 let progress = {};
 
+
 function saveProgress() {
     progress = {
         coins,
@@ -59,10 +60,12 @@ function saveProgress() {
         activeHelpers,
         lastOnline: Date.now(),
     };
-    updateCoinsInFirebase();
-    // Zapis do localStorage
-	localStorage.setItem("buszkoClickerProgress", JSON.stringify(progress));
+    if (userId) {
+        updateCoinsInFirebase();
+    }
+    localStorage.setItem("buszkoClickerProgress", JSON.stringify(progress));
 }
+
 // Save progress periodically to track the last online time
 setInterval(() => {
     saveProgress();
@@ -498,17 +501,18 @@ async function saveScoreToFirebase(nick, score) {
 // Funkcja do aktualizacji coins w Firebase
 async function updateCoinsInFirebase() {
     if (!userId) {
-        console.error("Użytkownik nie jest zalogowany.");
+        console.warn("Użytkownik nie jest zalogowany. Pomijam zapis do Firebase.");
         return;
     }
+    const userRef = ref(db, `leaderboard/${userId}`);
     try {
-        const userRef = ref(db, `leaderboard/${userId}`);
         await update(userRef, { coins });
-        console.log("Coins zaktualizowane w Firebase");
+        console.log("Buszonki zapisane w Firebase.");
     } catch (error) {
-        console.error("Błąd aktualizacji coins w Firebase:", error);
+        console.error("Błąd zapisu Buszonków do Firebase:", error);
     }
 }
+
 // Funkcja do aktualizacji tablicy wyników
 function updateLeaderboard() {
     const leaderboardRef = ref(db, "leaderboard");
