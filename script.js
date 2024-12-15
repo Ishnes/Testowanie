@@ -491,12 +491,12 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("Submit button or nick input is missing in the DOM.");
         return;
     }
-    submitButton.addEventListener("click", () => {
-        const nick = document.getElementById("playerNick").value.trim();
-    if (!nick) {
-        alert("Proszę wprowadzić poprawny nick!");
-        return;
-    }
+     submitButton.addEventListener("click", () => {
+        const nick = nickInput.value.trim();
+        if (!nick) {
+            alert("Proszę wprowadzić poprawny nick!");
+            return;
+        }
     saveScoreToFirebase(nick, coins); // Save both nickname and coins to Firebase
     });
 });
