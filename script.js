@@ -674,6 +674,12 @@ songs.forEach(song => {
 
 }
 
+function updateCoinDisplay() {
+    const nickInput = document.getElementById("playerNick");
+    const nick = nickInput ? nickInput.value.trim() : "Unknown";
+    saveNickAndCoinsToFirebase(nick); // Zapisz nick i postęp
+}
+
 async function initializeAuth() {
     if (!userId) {
         const provider = new GoogleAuthProvider();
