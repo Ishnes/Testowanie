@@ -360,11 +360,7 @@ songs.forEach(song => {
         return null;
     }
 }
-function updateCoinDisplay() {
-    const nickInput = document.getElementById("playerNick");
-    const nick = nickInput ? nickInput.value.trim() : "Unknown";
-    saveNickAndCoinsToFirebase(nick); // Zapisz nick i postęp
-}
+
 async function initializeAuth() {
     if (!userId) {
         const provider = new GoogleAuthProvider();
@@ -473,10 +469,7 @@ function updateCoinDisplay() {
         console.error('Niepoprawny obiekt progress:', progress);
     }
 }
-// Pobiera IP użytkownika (przykład za pomocą API ipify.org)
-// Funkcja do zalogowania się przez Google i pobrania unikatowego ID użytkownika
-// Funkcja do zapisywania postępu w Firebase i localStorage
-// Automatyczne zapisywanie nicka i coins do Firebase
+
 async function saveNickAndCoinsToFirebase(nick) {
     if (!userId) {
         console.error("Użytkownik nie jest zalogowany.");
