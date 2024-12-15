@@ -345,7 +345,6 @@ songs.forEach(song => {
     });
 });
 	let userId = null; // Globalna zmienna na ID użytkownika
-    const auth = getAuth();
 	async function getGoogleUserId() {
     const provider = new GoogleAuthProvider();
     try {
@@ -507,52 +506,6 @@ async function saveNickAndCoinsToFirebase(nick) {
     });
     // Inicjalizacja tablicy wyników
     updateLeaderboard();
-// Funkcja do zapisywania wyniku w Firebase
-// Zapisuje nick i wynik (liczbę coins) w Firebase
-async function loadProgressFromFirebase() {
-    if (!userId) {
-        console.error("Użytkownik nie jest zalogowany.");
-        return;
-    }
-    const sanitizedId = userId.replace(/\./g, '_');
-    const userRef = ref(db, `leaderboard/${sanitizedId}`);
-    try {
-        onValue(userRef, (snapshot) => {
-            if (snapshot.exists()) {
-                const data = snapshot.val();
-                coins = data.coins || 0;
-                baseCoinsPerClick = data.baseCoinsPerClick || 1;
-                foodBuff = data.foodBuff || 0;
-                currentSkin = data.currentSkin || 0;
-                unlockedSkins = data.unlockedSkins || [true, false, false, false];
-                activeHelpers = data.activeHelpers || [false];
-                // Zaktualizuj stan gry
-                calculateCoinsPerClick();
-                updateCoinDisplay();
-                updateSkinUI();
-                console.log("Dane przywrócone z Firebase.");
-            } else {
-                console.log("Brak danych w Firebase.");
-            }
-        });
-    } catch (error) {
-        console.error("Błąd przy wczytywaniu danych:", error);
-    }
-}
-async function updateCoinsInFirebase() {
-    if (!userId) {
-        console.error("Użytkownik nie jest zalogowany.");
-        return;
-    }
-    try {
-        const sanitizedId = userId.replace(/\./g, '_');
-        const userRef = ref(db, `leaderboard/${sanitizedId}`);
-        await update(userRef, { coins });
-        console.log("Coins zaktualizowane w Firebase");
-    } catch (error) {
-        console.error("Błąd aktualizacji coins w Firebase:", error);
-    }
-}
 // Funkcja do aktualizacji tablicy wyników
 function updateLeaderboard() {
     const leaderboardRef = ref(db, "leaderboard");
