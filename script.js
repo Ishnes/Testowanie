@@ -745,22 +745,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const savedUserId = localStorage.getItem("userId");
     if (savedUserId) {
         userId = savedUserId;
-        console.log("Użytkownik już zalogowany:", userId);
-        
-        // Przywróć progres z Firebase
         loadProgressFromFirebase();
     } else {
-        console.log("Użytkownik nie jest zalogowany. Wymagane logowanie.");
-    }
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-    const savedUserId = localStorage.getItem("userId");
-    if (savedUserId) {
-        userId = savedUserId; // Ustaw zapamiętane ID
-        console.log("Użytkownik już zalogowany:", userId);
-    } else {
-        console.log("Użytkownik nie jest zalogowany. Wymagane logowanie.");
+        console.log("Użytkownik nie jest zalogowany.");
     }
 });
 
@@ -927,30 +914,36 @@ async function saveNickAndCoinsToFirebase(nick) {
 
 // Zapisuje nick i wynik (liczbę coins) w Firebase
 
-async function saveScoreToFirebase(nick, score) {
-
+async function loadProgressFromFirebase() {
     if (!userId) {
-
         console.error("Użytkownik nie jest zalogowany.");
-
         return;
-
     }
-
-    const userRef = ref(db, `leaderboard/${userId}`);
-
+    const sanitizedId = userId.replace(/\./g, '_');
+    const userRef = ref(db, `leaderboard/${sanitizedId}`);
     try {
+        onValue(userRef, (snapshot) => {
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                coins = data.coins || 0;
+                baseCoinsPerClick = data.baseCoinsPerClick || 1;
+                foodBuff = data.foodBuff || 0;
+                currentSkin = data.currentSkin || 0;
+                unlockedSkins = data.unlockedSkins || [true, false, false, false];
+                activeHelpers = data.activeHelpers || [false];
 
-        await update(userRef, { nick, coins});
-
-        console.log("Wynik zapisano pomyślnie w Firebase.");
-
+                // Zaktualizuj stan gry
+                calculateCoinsPerClick();
+                updateCoinDisplay();
+                updateSkinUI();
+                console.log("Dane przywrócone z Firebase.");
+            } else {
+                console.log("Brak danych w Firebase.");
+            }
+        });
     } catch (error) {
-
-        console.error("Błąd zapisu wyniku do Firebase:", error);
-
+        console.error("Błąd przy wczytywaniu danych:", error);
     }
-
 }
 
 async function updateCoinsInFirebase() {
