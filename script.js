@@ -28,6 +28,8 @@ let activeHelpers = [false]; // Ensure this is initialized
 let lastSavedScore = 0;
 let currentAudio = null;
 let currentSongId = null;
+let progress = {};
+let userId = null; // Globalna zmienna na ID użytkownika
 // DOM Elements
 const coinDisplay = document.querySelector('.coiny');
 const clickerImage = document.getElementById('buszko');
@@ -47,7 +49,45 @@ const songs = [
 ];
 // Upewnij się, że zapisujemy coins podczas zapisu stanu gry
 // Globalna zmienna na przechowywanie stanu gry
-let progress = {};
+
+
+async function getGoogleUserId() {
+    const provider = new GoogleAuthProvider();
+    try {
+        // Logowanie użytkownika przez Google
+        const result = await signInWithPopup(auth, provider);      
+        // Pobranie unikatowego ID użytkownika
+        const user = result.user;
+        console.log("Zalogowano jako:", user.displayName, "UID:", user.uid);
+        // Zwrócenie unikatowego ID użytkownika
+        return user.uid;
+    } catch (error) {
+        console.error("Błąd logowania przez Google:", error);
+        return null;
+    }
+}
+
+async function initializeAuth() {
+    if (!userId) {
+        const provider = new GoogleAuthProvider();
+        try {
+            const result = await signInWithPopup(auth, provider);
+            userId = result.user.uid;
+            console.log("Zalogowano jako:", result.user.displayName);
+            // Zapisz userId w localStorage
+            localStorage.setItem("userId", userId);    
+            // Przywróć progres z Firebase
+            loadProgressFromFirebase();
+        } catch (error) {
+            console.error("Błąd logowania:", error);
+        }
+    }
+}
+
+document.getElementById('loginButton').addEventListener("click", getGoogleUserId, initializeAuth);
+localStorage.setItem("userId", userId);
+
+
 function saveProgress() {
     progress = {
         coins,
@@ -344,39 +384,7 @@ songs.forEach(song => {
         }
     });
 });
-	let userId = null; // Globalna zmienna na ID użytkownika
-	async function getGoogleUserId() {
-    const provider = new GoogleAuthProvider();
-    try {
-        // Logowanie użytkownika przez Google
-        const result = await signInWithPopup(auth, provider);      
-        // Pobranie unikatowego ID użytkownika
-        const user = result.user;
-        console.log("Zalogowano jako:", user.displayName, "UID:", user.uid);
-        // Zwrócenie unikatowego ID użytkownika
-        return user.uid;
-    } catch (error) {
-        console.error("Błąd logowania przez Google:", error);
-        return null;
-    }
-}
-
-async function initializeAuth() {
-    if (!userId) {
-        const provider = new GoogleAuthProvider();
-        try {
-            const result = await signInWithPopup(auth, provider);
-            userId = result.user.uid;
-            console.log("Zalogowano jako:", result.user.displayName);
-            // Zapisz userId w localStorage
-            localStorage.setItem("userId", userId);    
-            // Przywróć progres z Firebase
-            loadProgressFromFirebase();
-        } catch (error) {
-            console.error("Błąd logowania:", error);
-        }
-    }
-}
+	
 async function loadProgressFromFirebase() {
     if (!userId) {
         console.error("Użytkownik nie jest zalogowany.");
@@ -414,8 +422,7 @@ async function loadProgressFromFirebase() {
         console.error("Błąd przy wczytywaniu progresu z Firebase:", error);
     }
 }
-document.getElementById('loginButton').addEventListener("click", getGoogleUserId, initializeAuth);
-localStorage.setItem("userId", userId);
+
 document.addEventListener("DOMContentLoaded", () => {
     const savedUserId = localStorage.getItem("userId");
     if (savedUserId) {
