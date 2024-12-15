@@ -97,34 +97,24 @@ const songs = [
 let progress = {};
 
 
-
 function saveProgress() {
-
     progress = {
-
         coins,
-
         baseCoinsPerClick,
-
         foodBuff,
-
         currentSkin,
-
         unlockedSkins,
-
         activeHelpers,
-
-        lastOnline: Date.now(),
-
+        lastOnline: Date.now()
     };
 
+    // Zapisz do Firebase
     updateCoinsInFirebase();
 
-    // Zapis do localStorage
-
-	localStorage.setItem("buszkoClickerProgress", JSON.stringify(progress));
-
+    // Zapisz do localStorage
+    localStorage.setItem("buszkoClickerProgress", JSON.stringify(progress));
 }
+
 
 // Save progress periodically to track the last online time
 
@@ -691,6 +681,12 @@ async function initializeAuth() {
             const result = await signInWithPopup(auth, provider);
             userId = result.user.uid;
             console.log("Zalogowano jako:", result.user.displayName);
+            
+            // Zapisz userId w localStorage
+            localStorage.setItem("userId", userId);
+            
+            // Przywróć progres z Firebase
+            loadProgressFromFirebase();
         } catch (error) {
             console.error("Błąd logowania:", error);
         }
@@ -698,7 +694,44 @@ async function initializeAuth() {
 }
 
 
-
+async function loadProgressFromFirebase() {
+    if (!userId) {
+        console.error("Użytkownik nie jest zalogowany.");
+        return;
+    }
+    
+    try {
+        const sanitizedId = userId.replace(/\./g, '_'); // Upewnij się, że ID jest bezpieczne do użycia w Firebase
+        const userRef = ref(db, `leaderboard/${sanitizedId}`);
+        onValue(userRef, (snapshot) => {
+            if (snapshot.exists()) {
+                const savedProgress = snapshot.val();
+                if (savedProgress) {
+                    // Aktualizuj stan gry
+                    coins = savedProgress.coins || 0;
+                    baseCoinsPerClick = savedProgress.baseCoinsPerClick || 1;
+                    foodBuff = savedProgress.foodBuff || 0;
+                    currentSkin = savedProgress.currentSkin || 0;
+                    unlockedSkins = savedProgress.unlockedSkins || [true, false, false, false, false, false, false];
+                    activeHelpers = savedProgress.activeHelpers || [false];
+                    
+                    // Oblicz ponownie wartość kliknięcia
+                    calculateCoinsPerClick();
+                    
+                    // Zaktualizuj interfejs użytkownika
+                    updateCoinDisplay();
+                    updateSkinUI();
+                    
+                    console.log("Progres został przywrócony z Firebase.");
+                }
+            } else {
+                console.log("Brak zapisanych danych dla tego użytkownika.");
+            }
+        });
+    } catch (error) {
+        console.error("Błąd przy wczytywaniu progresu z Firebase:", error);
+    }
+}
 
 
 
@@ -706,6 +739,20 @@ async function initializeAuth() {
 document.getElementById('loginButton').addEventListener("click", getGoogleUserId, initializeAuth);
 
 localStorage.setItem("userId", userId);
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    const savedUserId = localStorage.getItem("userId");
+    if (savedUserId) {
+        userId = savedUserId;
+        console.log("Użytkownik już zalogowany:", userId);
+        
+        // Przywróć progres z Firebase
+        loadProgressFromFirebase();
+    } else {
+        console.log("Użytkownik nie jest zalogowany. Wymagane logowanie.");
+    }
+});
 
 document.addEventListener("DOMContentLoaded", () => {
     const savedUserId = localStorage.getItem("userId");
