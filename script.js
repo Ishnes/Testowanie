@@ -470,6 +470,21 @@ function updateCoinDisplay() {
     }
 }
 
+function updateCoinsInFirebase() {
+    if (!userId) {
+        console.error("Użytkownik nie jest zalogowany.");
+        return;
+    }
+    try {
+        const userRef = ref(db, `leaderboard/${userId}`);
+        update(userRef, { coins }); // Aktualizuje tylko liczbę monet w Firebase
+        console.log("Monety zostały zaktualizowane w Firebase.");
+    } catch (error) {
+        console.error("Błąd podczas aktualizacji monet w Firebase:", error);
+    }
+}
+
+
 async function saveNickAndCoinsToFirebase(nick) {
     if (!userId) {
         console.error("Użytkownik nie jest zalogowany.");
