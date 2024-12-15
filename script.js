@@ -384,23 +384,21 @@ songs.forEach(song => {
     });
 });
 	
-function saveScoreToFirebase(nick, score) {
+// Save Nick and Coins to Firebase
+async function saveScoreToFirebase(nick, coins) {
     if (!userId) {
         console.error("Użytkownik nie jest zalogowany. Nie można zapisać wyniku.");
         return;
     }
-
     try {
-        const sanitizedId = userId.replace(/\./g, '_'); // To ensure safe key in Firebase
+        const sanitizedId = userId.replace(/\./g, '_'); // Ensure the ID is safe for Firebase
         const userRef = ref(db, `leaderboard/${sanitizedId}`);
-        
-        // Update data in Firebase
-        update(userRef, {
+        // Save both nickname and coins in Firebase
+        await update(userRef, {
             nick: nick,
             coins: coins,
             lastUpdated: Date.now() // Timestamp for last update
         });
-
         console.log("Dane zapisane w Firebase:", { nick, coins });
     } catch (error) {
         console.error("Błąd podczas zapisu danych do Firebase:", error);
@@ -409,6 +407,7 @@ function saveScoreToFirebase(nick, score) {
 
 
 
+// Load progress and nickname from Firebase
 async function loadProgressFromFirebase() {
     if (!userId) {
         console.error("Użytkownik nie jest zalogowany.");
@@ -421,22 +420,18 @@ async function loadProgressFromFirebase() {
             if (snapshot.exists()) {
                 const savedProgress = snapshot.val();
                 if (savedProgress) {
-                    // Aktualizuj stan gry
                     coins = savedProgress.coins || 0;
                     baseCoinsPerClick = savedProgress.baseCoinsPerClick || 1;
                     foodBuff = savedProgress.foodBuff || 0;
                     currentSkin = savedProgress.currentSkin || 0;
                     unlockedSkins = savedProgress.unlockedSkins || [true, false, false, false, false, false, false];
                     activeHelpers = savedProgress.activeHelpers || [false];
-                    
-                    // Oblicz ponownie wartość kliknięcia
+                    const nick = savedProgress.nick || "Unknown"; // Get the nickname from Firebase
+                    document.getElementById('playerNick').value = nick; // Set the nickname in the input field
                     calculateCoinsPerClick();
-                    
-                    // Zaktualizuj interfejs użytkownika
                     updateCoinDisplay();
                     updateSkinUI();
-                    
-                    console.log("Progres został przywrócony z Firebase.");
+                    console.log("Progres i nick zostały przywrócone z Firebase.");
                 }
             } else {
                 console.log("Brak zapisanych danych dla tego użytkownika.");
@@ -469,12 +464,12 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
     submitButton.addEventListener("click", () => {
-        const nick = nickInput.value.trim();
-        if (!nick) {
-            alert("Proszę wprowadzić poprawny nick!");
-            return;
-        }
-        saveScoreToFirebase(nick, coins);
+        const nick = document.getElementById("playerNick").value.trim();
+    if (!nick) {
+        alert("Proszę wprowadzić poprawny nick!");
+        return;
+    }
+    saveScoreToFirebase(nick, coins); // Save both nickname and coins to Firebase
     });
 });
     // Other initialization logic requiring nickInput
