@@ -86,6 +86,42 @@ async function initializeAuth() {
 document.getElementById('loginButton').addEventListener("click", getGoogleUserId, initializeAuth);
 localStorage.setItem("userId", userId);
 
+// Funkcja wylogowania
+async function logoutUser() {
+    try {
+        await auth.signOut(); // Wylogowanie z Firebase Auth
+        userId = null; // Wyczyszczenie globalnej zmiennej userId
+        localStorage.removeItem("userId"); // Usunięcie userId z localStorage
+        updateLoginButton(); // Zaktualizowanie tekstu przycisku
+        alert("Wylogowano pomyślnie!");
+    } catch (error) {
+        console.error("Błąd podczas wylogowania:", error);
+    }
+}
+
+// Funkcja do zmiany tekstu przycisku logowania/wylogowania
+function updateLoginButton() {
+    const loginButton = document.getElementById('loginButton');
+    if (userId) {
+        loginButton.textContent = "Wyloguj"; // Użytkownik jest zalogowany
+        loginButton.removeEventListener("click", initializeAuth);
+        loginButton.addEventListener("click", logoutUser);
+    } else {
+        loginButton.textContent = "Zaloguj"; // Użytkownik jest niezalogowany
+        loginButton.removeEventListener("click", logoutUser);
+        loginButton.addEventListener("click", initializeAuth);
+    }
+}
+
+// Wywołanie updateLoginButton na starcie
+document.addEventListener("DOMContentLoaded", () => {
+    const savedUserId = localStorage.getItem("userId");
+    userId = savedUserId ? savedUserId : null;
+    updateLoginButton(); // Zaktualizuj tekst przycisku na podstawie stanu użytkownika
+});
+
+
+
 
 function saveProgress() {
     if (!userId) {
