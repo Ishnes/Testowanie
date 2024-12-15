@@ -1,8 +1,7 @@
-// Import Firebase SDK
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
 import { getDatabase, ref, update, onValue, set } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
 import { getAuth, signInWithPopup, GoogleAuthProvider, signInWithRedirect } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
-// Konfiguracja Firebase
+
 const firebaseConfig = {
     apiKey: "AIzaSyBMPmNPLGHrBBU3d2DNgq1rutE5R5fBAWc",
     authDomain: "buszkoclicker.firebaseapp.com",
@@ -12,12 +11,10 @@ const firebaseConfig = {
     messagingSenderId: "951563794729",
     appId: "1:951563794729:web:f02b247e6cc5c16cf41f38"
 };
-// Inicjalizacja Firebase
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
-// Zmienna globalna reprezentująca liczbę "Buszonków"
-// Variables to track game state
+
 let coins = 0;
 let baseCoinsPerClick = 1;
 let coinsPerClick = baseCoinsPerClick;
@@ -45,10 +42,7 @@ const helperEarnings = [0.02, 0.05]; // 10% of current Buszonki per click
 const nickInput = document.querySelector('#playerNick');
 const songs = [
     { id: 'song1', cost: 0, src: 'bones.mp3', unlocked: true }, // Free song, already unlocked
-    { id: 'song2', cost: 99999999999999999, src: 'enemy.mp3', unlocked: false },
-];
-// Upewnij się, że zapisujemy coins podczas zapisu stanu gry
-// Globalna zmienna na przechowywanie stanu gry
+    { id: 'song2', cost: 99999999999999999, src: 'enemy.mp3', unlocked: false },];
 
 async function getGoogleUserId() {
     const provider = new GoogleAuthProvider();
@@ -83,13 +77,10 @@ async function initializeAuth() {
     }
 }
 
-
 document.getElementById('loginButton').addEventListener("click", async () => {
     initializeAuth();
 });
 
-
-// Funkcja wylogowania
 async function logoutUser() {
     try {
         await auth.signOut(); // Wylogowanie z Firebase Auth
@@ -102,7 +93,6 @@ async function logoutUser() {
     }
 }
 
-// Funkcja do zmiany tekstu przycisku logowania/wylogowania
 function updateLoginButton() {
     const loginButton = document.getElementById('loginButton');
     if (userId) {
@@ -116,7 +106,6 @@ function updateLoginButton() {
     }
 }
 
-// Wywołanie updateLoginButton na starcie
 document.addEventListener("DOMContentLoaded", () => {
     const savedUserId = localStorage.getItem("userId");
     if (savedUserId) {
@@ -125,16 +114,11 @@ document.addEventListener("DOMContentLoaded", () => {
     updateLoginButton(); // Zaktualizuj tekst przycisku na podstawie stanu użytkownika
 });
 
-
-
-
-
 function saveProgress() {
     if (!userId) {
         console.error("Użytkownik nie jest zalogowany. Nie można zapisać progresu.");
         return;
     }
-
     progress = {
         coins,
         baseCoinsPerClick,
@@ -144,16 +128,13 @@ function saveProgress() {
         activeHelpers,
         lastOnline: Date.now()
     };
-
     const sanitizedId = userId.replace(/\./g, '_');
     const userRef = ref(db, `leaderboard/${sanitizedId}`);
-
     update(userRef, progress)
         .then(() => console.log("Progres zapisany w Firebase"))
         .catch((error) => console.error("Błąd podczas zapisu do Firebase:", error));
 }
 
-// Save progress periodically to track the last online time
 setInterval(() => {
     saveProgress();
 }, 10000); // Zapisuj co 10 sekund
@@ -377,7 +358,6 @@ function updateSongUI(song) {
     }
 
 }
-
 // Function to Unlock Songs
 function unlockSong(song) {
     if (coins >= song.cost && !song.unlocked) {
@@ -388,11 +368,9 @@ function unlockSong(song) {
         updateCoinDisplay();
         saveProgress();
     } else if (song.unlocked) {
-
         alert("Już odblokowałeś tę piosenkę!");
 
     } else {
-
         alert("Nie masz wystarczająco Buszonków, żeby odblokować!");
     }
 }
@@ -456,9 +434,6 @@ async function saveScoreToFirebase(nick, coins) {
         console.error("Błąd podczas zapisu danych do Firebase:", error);
     }
 }
-
-
-
 // Load progress and nickname from Firebase
 async function loadProgressFromFirebase() {
     if (!userId) {
@@ -491,14 +466,11 @@ async function loadProgressFromFirebase() {
         console.error("Błąd podczas wczytywania danych z Firebase:", error);
     }
 }
-
 function updateUI() {
     calculateCoinsPerClick();
     updateCoinDisplay();
     updateSkinUI();
 }
-
-
 document.addEventListener("DOMContentLoaded", async () => {
     // First check if the user is already logged in (i.e., if userId is set in localStorage)
     const savedUserId = localStorage.getItem("userId");
@@ -510,7 +482,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         await initializeAuth();  // Only call initializeAuth if userId is not found in localStorage
     }
 });
-
 // Sprawdzanie istnienia elementów przed przypisaniem zdarzenia
 document.addEventListener("DOMContentLoaded", () => {
     const submitButton = document.getElementById("submitNick");
@@ -537,7 +508,6 @@ document.addEventListener("DOMContentLoaded", () => {
         lastSavedScore = coins; // Aktualizuj ostatnio zapisany wynik
     }
 }, 30000); // Zmiana na zapis co 30 sekund
-
 function updateCoinDisplay() {
     // Aktualizacja wyświetlania liczby Buszonków
     const safeCoins = Number.isFinite(coins) ? Math.floor(coins) : 0;
@@ -555,7 +525,6 @@ function updateCoinDisplay() {
         console.error('Niepoprawny obiekt progress:', progress);
     }
 }
-
 function updateCoinsInFirebase() {
     if (!userId) {
         console.error("Nie można zaktualizować danych w Firebase: brak userId.");
@@ -584,7 +553,6 @@ function updateCoinsInFirebase() {
         console.error("Błąd w funkcji updateCoinsInFirebase:", error);
     }
 }
-
 async function saveNickAndCoinsToFirebase(nick) {
     if (!userId) {
         console.error("Użytkownik nie jest zalogowany.");
@@ -631,4 +599,4 @@ function updateLeaderboard() {
             });
         }
     });
-	}
+}
