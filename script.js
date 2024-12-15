@@ -4,21 +4,13 @@ import { getDatabase, ref, update, onValue, set } from "https://www.gstatic.com/
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
 // Konfiguracja Firebase
 const firebaseConfig = {
-
     apiKey: "AIzaSyBMPmNPLGHrBBU3d2DNgq1rutE5R5fBAWc",
-
     authDomain: "buszkoclicker.firebaseapp.com",
-
     databaseURL: "https://buszkoclicker-default-rtdb.europe-west1.firebasedatabase.app",
-
     projectId: "buszkoclicker",
-
     storageBucket: "buszkoclicker.firebasestorage.app",
-
     messagingSenderId: "951563794729",
-
     appId: "1:951563794729:web:f02b247e6cc5c16cf41f38"
-
 };
 // Inicjalizacja Firebase
 const app = initializeApp(firebaseConfig);
@@ -65,10 +57,8 @@ function saveProgress() {
         activeHelpers,
         lastOnline: Date.now()
     };
-
     // Zapisz do Firebase
     updateCoinsInFirebase();
-
     // Zapisz do localStorage
     localStorage.setItem("buszkoClickerProgress", JSON.stringify(progress));
 }
@@ -78,11 +68,8 @@ setInterval(() => {
 }, 10000); // Zapisuj co 10 sekund
 // Load progress
 function loadProgress() {
-
     const savedProgress = localStorage.getItem('buszkoClickerProgress');
-
     if (savedProgress) {
-
         const progress = JSON.parse(savedProgress);
         coins = progress.coins || 0;
         baseCoinsPerClick = progress.baseCoinsPerClick || 1;
@@ -101,13 +88,11 @@ function loadProgress() {
                 coins += earnings;
             }
         });
-
         applySkin(currentSkin);
         updateCoinDisplay();
         updateCoinsInFirebase();  // Synchronizuj dane z Firebase
         updateSkinUI();
         // Restart active helpers
-
 	    activeHelpers.forEach((isActive, index) => {
 
             if (isActive) {
@@ -123,88 +108,46 @@ function loadProgress() {
         });
     }
 }
-
 // Initialize the game
 loadProgress();
 // Reset all progress
 function resetProgress() {
-
     if (confirm("Czy jesteś pewnien że chcesz zresetować cały postęp?")) {
-
         // Reset all game state
-
         coins = 0;
-
         baseCoinsPerClick = 1;
-
         coinsPerClick = baseCoinsPerClick;
-
         foodBuff = 0;
-
         currentSkin = 0;
-
         unlockedSkins = [true, false, false, false, false, false, false];
-
         activeHelpers = [false]; // Reset all helpers
-
         // Hide all helper displays
-
 	    document.querySelectorAll('.helper-item').forEach((helperItem, index) => {
-
             const helperDisplay = document.getElementById(`helperDisplay${index + 1}`);
-
             if (helperDisplay) {
-
 		    helperDisplay.classList.add('hidden');
-
-
-
             }
-
         });
-
-
-
         saveProgress();
-
         loadProgress();
-
         alert("Postęp zresetowany!");
-
     }
-
 }
-
 // Funkcja do obsługi kliknięcia Buszko
-
 function clickBuszko() {
-
     coins += coinsPerClick; // Zwiększanie liczby coins o wartość coinsPerClick
-
     updateCoinDisplay();  // Aktualizowanie wyświetlania liczby coins
-
     saveProgress();  // Zapisz postęp gry
-
 	updateCoinsInFirebase();
-
 }
-
 // Apply a skin
-
 function applySkin(skinIndex) {
-
     if (unlockedSkins[skinIndex]) {
-
         currentSkin = skinIndex;
-
         clickerImage.src = skinImages[skinIndex].src;
-
         calculateCoinsPerClick();
-
         updateSkinUI();
-
         saveProgress();
-
     } else {
 
         alert("Jeszcze nie odblokowałeś tego skina :/");
@@ -212,189 +155,100 @@ function applySkin(skinIndex) {
     }
 
 }
-
 // Calculate coins per click
-
 function calculateCoinsPerClick() {
-
     const skinMultiplier = skinMultipliers[currentSkin]; // Mnożnik skina
-
     coinsPerClick = (baseCoinsPerClick + foodBuff) * skinMultiplier;
-
 }
-
 // Update skin UI
-
 function updateSkinUI() {
-
     skinImages.forEach((img, index) => {        img.classList.toggle('unlocked', unlockedSkins[index]);
-
         img.style.opacity = unlockedSkins[index] ? '1' : '0.5';
-
         img.style.cursor = unlockedSkins[index] ? 'pointer' : 'not-allowed';
-
     });
-
 }
-
 // Handle skin click
-
 skinImages.forEach((img, index) => {
-
     img.addEventListener('click', () => {
-
         if (unlockedSkins[index]) {
-
             applySkin(index);
-
         } else if (coins >= skinPrices[index]) {
-
             coins -= skinPrices[index];
-
             unlockedSkins[index] = true;
-
             applySkin(index);
-
             alert(`Odblokowałeś skina :D`);
-
             updateCoinDisplay();
-
             saveProgress();
-
         } else {
 
             alert(`Nie masz wystarczająco Buszonków żeby to kupić :(`);
-
         }
-
     });
-
 });
-
 // Handle food purchases and quantity logic
-
 foodItems.forEach((foodItem, index) => {
-
     const buyButton = document.getElementById(`buy-food${index + 1}`);
-
     const quantityInput = document.getElementById(`food${index + 1}-quantity`);
-
     const maxQuantityDisplay = document.getElementById(`food${index + 1}-max`);
-
     // Function to update the maximum quantity of food that can be bought
-
     function updateMaxQuantity() {
-
         const maxQuantity = Math.floor(coins / foodPrices[index]); // Calculate the maximum number of items
-
         maxQuantityDisplay.textContent = `Max: ${maxQuantity}`; // Update the max quantity display
-
 	    quantityInput.setAttribute("max", maxQuantity); // Set the max value in the input field
-
     }
-
     // Update max quantity when the page loads and when coins change
-
     updateMaxQuantity();
-
     // Recalculate max quantity whenever the player has enough coins
-
 	buyButton.addEventListener('click', () => {
-
         const quantity = parseInt(quantityInput.value); // Get the quantity from the input field
-
         const totalCost = foodPrices[index] * quantity; // Calculate the total cost
-
         if (quantity <= 0) {
-
             alert("Wpisz dodatnią liczbę!");
-
             return;
-
         }
-
         if (coins >= totalCost) {
-
             coins -= totalCost; // Deduct the coins for the total cost
-
             foodBuff += foodBuffs[index] * quantity; // Apply the food buff multiplied by the quantity
-
             calculateCoinsPerClick(); // Recalculate the coins per click
-
             alert(`Nakarmiłeś Buszona! Dostajesz więcej Buszonków: ${foodBuffs[index] * quantity}.`);
-
             updateCoinDisplay();
-
             saveProgress();
-
             updateMaxQuantity(); // Update the max quantity after purchase
 
         } else {
 
             alert(`Nie masz wystarczająco Buszonków, żeby to kupić!`);
-
         }
-
     });
-
 });
-
 // Event listener for Buszko click
-
 clickerImage.addEventListener('click', clickBuszko);
-
 // Event listener for Reset Button
-
 resetButton.addEventListener('click', resetProgress);
-
 // Start a helper's autoclick
-
 function startHelper(index) {
-
     setInterval(() => {
-
         if (activeHelpers[index]) {
-
             const earnings = coinsPerClick * helperEarnings[index];
-
             coins += earnings;
-
             updateCoinDisplay();
-
             saveProgress(); // Save progress regularly
-
         }
-
     }, 1000); // Autoclick every second
-
 }
-
 // Purchase a helper
-
 function purchaseHelper(index) {
-
     if (coins >= helperPrices[index] && !activeHelpers[index]) {
-
         coins -= helperPrices[index];
-
         activeHelpers[index] = true;
-
         const helperDisplay = document.getElementById(`helperDisplay${index + 1}`);
-
         if (helperDisplay) {
-
             helperDisplay.classList.remove('hidden');
-
         }
-
         startHelper(index);
-
         alert("Pomocnik kupiony!");
-
         updateCoinDisplay();
-
         saveProgress(); // Save state after purchase
-
     } else if (activeHelpers[index]) {
 
         alert("Już masz tego pomocnika!");
@@ -406,73 +260,41 @@ function purchaseHelper(index) {
     }
 
 }
-
 // Show helper displays only if they exist
-
 activeHelpers.forEach((isActive, index) => {
-
     const helperDisplay = document.getElementById(`helperDisplay${index + 1}`);
-
     if (helperDisplay && isActive) {
-
         helperDisplay.classList.remove('hidden');
-
     }
-
 });
-
 // Add event listeners for helpers
-
 document.querySelectorAll('.helper-item').forEach((helperItem, index) => {
-
     helperItem.addEventListener('click', () => purchaseHelper(index));
-
 });
-
 // Function to Update the UI for Locked/Unlocked Songs
-
 function updateSongUI(song) {
-
     const songImage = document.getElementById(song.id);
-
     if (song.unlocked) {
-
         songImage.classList.remove('locked');
-
         songImage.classList.add('unlocked');
-
         songImage.title = "Kliknij żeby odtworzyć";
-
     } else {
-
         songImage.classList.remove('unlocked');
-
         songImage.classList.add('locked');
-
         songImage.title = `Locked: ${song.cost} Buszonki`;
-
     }
 
 }
 
 // Function to Unlock Songs
-
 function unlockSong(song) {
-
     if (coins >= song.cost && !song.unlocked) {
-
         coins -= song.cost;
-
         song.unlocked = true;
-
         updateSongUI(song);
-
         alert(`Odblokowałeś "${song.id}"!`);
-
         updateCoinDisplay();
-
         saveProgress();
-
     } else if (song.unlocked) {
 
         alert("Już odblokowałeś tę piosenkę!");
@@ -480,131 +302,69 @@ function unlockSong(song) {
     } else {
 
         alert("Nie masz wystarczająco Buszonków, żeby odblokować!");
-
     }
-
 }
-
 // Function to Play or Stop a Song
-
 // Function to Play or Stop a Song
-
 function toggleSongPlayback(song) {
-
     if (!song.unlocked) {
-
         alert("Musisz najpierw odblokować to");
-
         return;
-
     }
-
     if (currentAudio && currentSongId === song.id) {
-
         currentAudio.pause();
-
         currentAudio.currentTime = 0;
-
         currentAudio = null;
-
         currentSongId = null;
-
         alert(`Zatrzymano "${song.id}".`);
-
     } else {
-
         if (currentAudio) {
-
             currentAudio.pause();
-
             currentAudio.currentTime = 0;
-
         }
-
         currentAudio = new Audio(song.src);
-
         currentAudio.loop = true;
-
         currentAudio.play();
-
         currentSongId = song.id;
-
         alert(`Odtwarzanie "${song.id}"!`);
-
     }
-
 }
-
 // Event Listeners - For UI Interaction
-
 songs.forEach(song => {
-
     const songImage = document.getElementById(song.id);
-
     // Update initial locked/unlocked state on page load
-
     updateSongUI(song);
-
     // Handle click events for unlocking or toggling playback
-
     songImage.addEventListener('click', () => {
-
         if (!song.unlocked) {
-
             unlockSong(song);
-
         } else {
-
             toggleSongPlayback(song);
-
         }
-
     });
-
 });
-
 	let userId = null; // Globalna zmienna na ID użytkownika
-
-
-
     const auth = getAuth();
-
 	async function getGoogleUserId() {
-
     const provider = new GoogleAuthProvider();
-
     try {
-
         // Logowanie użytkownika przez Google
-
         const result = await signInWithPopup(auth, provider);      
-
         // Pobranie unikatowego ID użytkownika
-
         const user = result.user;
-
         console.log("Zalogowano jako:", user.displayName, "UID:", user.uid);
-
         // Zwrócenie unikatowego ID użytkownika
-
         return user.uid;
-
     } catch (error) {
-
         console.error("Błąd logowania przez Google:", error);
-
         return null;
-
     }
-
 }
-
 function updateCoinDisplay() {
     const nickInput = document.getElementById("playerNick");
     const nick = nickInput ? nickInput.value.trim() : "Unknown";
     saveNickAndCoinsToFirebase(nick); // Zapisz nick i postęp
 }
-
 async function initializeAuth() {
     if (!userId) {
         const provider = new GoogleAuthProvider();
@@ -612,10 +372,8 @@ async function initializeAuth() {
             const result = await signInWithPopup(auth, provider);
             userId = result.user.uid;
             console.log("Zalogowano jako:", result.user.displayName);
-            
             // Zapisz userId w localStorage
-            localStorage.setItem("userId", userId);
-            
+            localStorage.setItem("userId", userId);    
             // Przywróć progres z Firebase
             loadProgressFromFirebase();
         } catch (error) {
@@ -623,14 +381,11 @@ async function initializeAuth() {
         }
     }
 }
-
-
 async function loadProgressFromFirebase() {
     if (!userId) {
         console.error("Użytkownik nie jest zalogowany.");
         return;
     }
-    
     try {
         const sanitizedId = userId.replace(/\./g, '_'); // Upewnij się, że ID jest bezpieczne do użycia w Firebase
         const userRef = ref(db, `leaderboard/${sanitizedId}`);
@@ -663,15 +418,8 @@ async function loadProgressFromFirebase() {
         console.error("Błąd przy wczytywaniu progresu z Firebase:", error);
     }
 }
-
-
-
-
 document.getElementById('loginButton').addEventListener("click", getGoogleUserId, initializeAuth);
-
 localStorage.setItem("userId", userId);
-
-
 document.addEventListener("DOMContentLoaded", () => {
     const savedUserId = localStorage.getItem("userId");
     if (savedUserId) {
@@ -681,122 +429,61 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("Użytkownik nie jest zalogowany.");
     }
 });
-
-
 // Sprawdzanie istnienia elementów przed przypisaniem zdarzenia
-
 document.addEventListener("DOMContentLoaded", () => {
-
     const submitButton = document.getElementById("submitNick");
-
     const nickInput = document.getElementById("playerNick");
-
     // Ensure both elements exist before proceeding
-
     if (!submitButton || !nickInput) {
-
         console.error("Submit button or nick input is missing in the DOM.");
-
         return;
-
     }
-
     submitButton.addEventListener("click", () => {
-
         const nick = nickInput.value.trim();
-
         if (!nick) {
-
             alert("Proszę wprowadzić poprawny nick!");
-
             return;
-
         }
-
         saveScoreToFirebase(nick, coins);
-
     });
 });
     // Other initialization logic requiring nickInput
-
     setInterval(() => {
-
     const nick = nickInput.value.trim();
-
     if (nick && coins !== lastSavedScore) { // Zapis tylko jeśli monety się zmieniły
-
         saveNickAndCoinsToFirebase(nick);
-
         lastSavedScore = coins; // Aktualizuj ostatnio zapisany wynik
-
     }
-
 }, 30000); // Zmiana na zapis co 30 sekund
-
 // Wywołanie automatycznego zapisu przy każdej zmianie coins
-
 function updateCoinDisplay() {
-
     // Aktualizacja wyświetlania liczby Buszonków
-
     const safeCoins = Number.isFinite(coins) ? Math.floor(coins) : 0;
-
     const safeCoinsPerClick = Number.isFinite(coinsPerClick) ? Math.floor(coinsPerClick) : 0;
-
     coinDisplay.textContent = `Buszonki: ${safeCoins} (Buszonki na kliknięcie: ${safeCoinsPerClick})`;
-
     // Pobierz nick gracza
-
     const nickInput = document.getElementById("playerNick");
-
     const nick = nickInput ? nickInput.value.trim() : "Unknown";
-
     // Zapis danych do Firebase
-
     saveNickAndCoinsToFirebase(nick);
-
     // Zapis danych do localStorage
-
     if (progress && typeof progress === 'object') {
-
         localStorage.setItem("buszkoClickerProgress", JSON.stringify(progress));
-
     } else {
-
         console.error('Niepoprawny obiekt progress:', progress);
-
     }
-
 }
-
-	
-
 // Pobiera IP użytkownika (przykład za pomocą API ipify.org)
-
-
-
 // Funkcja do zalogowania się przez Google i pobrania unikatowego ID użytkownika
-
-
-
 // Funkcja do zapisywania postępu w Firebase i localStorage
-
 // Automatyczne zapisywanie nicka i coins do Firebase
-
 async function saveNickAndCoinsToFirebase(nick) {
-
     if (!userId) {
-
         console.error("Użytkownik nie jest zalogowany.");
-
         return;
-
     }
-
     const userRef = ref(db, `leaderboard/${userId}`);
-
     try {
-
         await update(userRef, { nick, coins });
 
         console.log("Nick i coins zapisano pomyślnie w Firebase.");
@@ -804,47 +491,23 @@ async function saveNickAndCoinsToFirebase(nick) {
     } catch (error) {
 
         console.error("Błąd zapisu do Firebase:", error);
-
     }
-
 }
-
     // Automatyczny zapis wyniku co 10 sekund
-
-
-
     document.addEventListener('DOMContentLoaded', () => {
-
         const nickInput = document.querySelector('#playerNick');
-
-    
-
         setInterval(() => {
-
             const nick = nickInput.value.trim();
-
-    
-
             if (nick && coins !== lastSavedScore) {
-
                 saveScoreToFirebase(nick, coins);
-
                 lastSavedScore = coins;
-
             }
-
         }, 10000);
-
     });
-
     // Inicjalizacja tablicy wyników
-
     updateLeaderboard();
-
 // Funkcja do zapisywania wyniku w Firebase
-
 // Zapisuje nick i wynik (liczbę coins) w Firebase
-
 async function loadProgressFromFirebase() {
     if (!userId) {
         console.error("Użytkownik nie jest zalogowany.");
@@ -862,7 +525,6 @@ async function loadProgressFromFirebase() {
                 currentSkin = data.currentSkin || 0;
                 unlockedSkins = data.unlockedSkins || [true, false, false, false];
                 activeHelpers = data.activeHelpers || [false];
-
                 // Zaktualizuj stan gry
                 calculateCoinsPerClick();
                 updateCoinDisplay();
@@ -876,7 +538,6 @@ async function loadProgressFromFirebase() {
         console.error("Błąd przy wczytywaniu danych:", error);
     }
 }
-
 async function updateCoinsInFirebase() {
     if (!userId) {
         console.error("Użytkownik nie jest zalogowany.");
@@ -891,39 +552,21 @@ async function updateCoinsInFirebase() {
         console.error("Błąd aktualizacji coins w Firebase:", error);
     }
 }
-
 // Funkcja do aktualizacji tablicy wyników
-
 function updateLeaderboard() {
-
     const leaderboardRef = ref(db, "leaderboard");
-
     onValue(leaderboardRef, (snapshot) => {
-
         const leaderboardTable = document.querySelector("#leaderboardTable tbody");
-
         if (!leaderboardTable) return;
-
         leaderboardTable.innerHTML = ""; // Wyczyść tabelę przed odświeżeniem
-
         const data = snapshot.val();
-
         if (data) {
-
             const sortedData = Object.values(data).sort((a, b) => b.coins - a.coins);
-
             sortedData.forEach((entry) => {
-
                 const row = document.createElement("tr");
-
                 row.innerHTML = `<td>${entry.nick}</td><td>${entry.coins}</td>`;
-
                 leaderboardTable.appendChild(row);
-
             });
-
         }
-
     });
-
 	}
