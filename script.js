@@ -941,7 +941,7 @@ async function saveScoreToFirebase(nick, score) {
 
     try {
 
-        await update(userRef, { nick, score });
+        await update(userRef, { nick, coins});
 
         console.log("Wynik zapisano pomyślnie w Firebase.");
 
