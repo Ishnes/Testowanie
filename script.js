@@ -385,6 +385,30 @@ songs.forEach(song => {
     });
 });
 	
+function saveScoreToFirebase(nick, score) {
+    if (!userId) {
+        console.error("Użytkownik nie jest zalogowany. Nie można zapisać wyniku.");
+        return;
+    }
+
+    try {
+        const sanitizedId = userId.replace(/\./g, '_'); // Zapewnienie bezpieczeństwa w kluczu Firebase
+        const userRef = ref(db, `leaderboard/${sanitizedId}`);
+        
+        // Aktualizacja danych w Firebase
+        update(userRef, {
+            nick: nick,
+            coins: score,
+            lastUpdated: Date.now() // Dodatkowa informacja o czasie aktualizacji
+        });
+
+        console.log("Dane zapisane w Firebase:", { nick, score });
+    } catch (error) {
+        console.error("Błąd podczas zapisu danych do Firebase:", error);
+    }
+}
+
+
 async function loadProgressFromFirebase() {
     if (!userId) {
         console.error("Użytkownik nie jest zalogowany.");
@@ -458,7 +482,7 @@ document.addEventListener("DOMContentLoaded", () => {
         lastSavedScore = coins; // Aktualizuj ostatnio zapisany wynik
     }
 }, 30000); // Zmiana na zapis co 30 sekund
-// Wywołanie automatycznego zapisu przy każdej zmianie coins
+
 function updateCoinDisplay() {
     // Aktualizacja wyświetlania liczby Buszonków
     const safeCoins = Number.isFinite(coins) ? Math.floor(coins) : 0;
@@ -479,15 +503,30 @@ function updateCoinDisplay() {
 
 function updateCoinsInFirebase() {
     if (!userId) {
-        console.error("Użytkownik nie jest zalogowany.");
+        console.error("Nie można zaktualizować danych w Firebase: brak userId.");
         return;
     }
     try {
-        const userRef = ref(db, `leaderboard/${userId}`);
-        update(userRef, { coins }); // Aktualizuje tylko liczbę monet w Firebase
-        console.log("Monety zostały zaktualizowane w Firebase.");
+        const sanitizedId = userId.replace(/\./g, '_'); // Upewnij się, że ID jest bezpieczne do użycia w Firebase
+        const userRef = ref(db, `leaderboard/${sanitizedId}`);
+        const data = {
+            coins,
+            baseCoinsPerClick,
+            foodBuff,
+            currentSkin,
+            unlockedSkins,
+            activeHelpers,
+            lastOnline: Date.now(),
+        };
+        update(userRef, data)
+            .then(() => {
+                console.log("Dane zostały pomyślnie zaktualizowane w Firebase.");
+            })
+            .catch((error) => {
+                console.error("Błąd podczas aktualizacji danych w Firebase:", error);
+            });
     } catch (error) {
-        console.error("Błąd podczas aktualizacji monet w Firebase:", error);
+        console.error("Błąd w funkcji updateCoinsInFirebase:", error);
     }
 }
 
