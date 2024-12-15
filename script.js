@@ -1,13 +1,8 @@
 // Import Firebase SDK
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-
 import { getDatabase, ref, update, onValue, set } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
-
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
-
 // Konfiguracja Firebase
-
 const firebaseConfig = {
 
     apiKey: "AIzaSyBMPmNPLGHrBBU3d2DNgq1rutE5R5fBAWc",
@@ -25,78 +20,41 @@ const firebaseConfig = {
     appId: "1:951563794729:web:f02b247e6cc5c16cf41f38"
 
 };
-
 // Inicjalizacja Firebase
-
 const app = initializeApp(firebaseConfig);
-
 const db = getDatabase(app);
-
 // Zmienna globalna reprezentująca liczbę "Buszonków"
-
 // Variables to track game state
-
 let coins = 0;
-
 let baseCoinsPerClick = 1;
-
 let coinsPerClick = baseCoinsPerClick;
-
 let foodBuff = 0;
-
 let currentSkin = 0;
-
 let unlockedSkins = [true, false, false, false, false, false, false];
-
 let activeHelpers = [false]; // Ensure this is initialized
-
 let lastSavedScore = 0;
-
 let currentAudio = null;
-
 let currentSongId = null;
-
 // DOM Elements
-
 const coinDisplay = document.querySelector('.coiny');
-
 const clickerImage = document.getElementById('buszko');
-
 const foodItems = document.querySelectorAll('.food-item');
-
 const skinImages = document.querySelectorAll('.skins .skin-item img');
-
 const resetButton = document.getElementById('resetButton');
-
 const skinPrices = [0, 7500, 200000, 72000000, 690000000, 2300000000, 420000000000, 69000000000000000, 999999999999999999, 99999999999999999999999999999999];
-
 const skinMultipliers = [1, 2, 5, 10, 55, 100, 420, 696, 1000, 9999];
-
 const foodPrices = [100, 2500, 100000, 4444444, 240000000, 5600000000];
-
 const foodBuffs = [5, 25, 100, 444, 975, 1650];
-
 const helperPrices = [125000, 500000];
-
 const helperEarnings = [0.02, 0.05]; // 10% of current Buszonki per click
-
 const nickInput = document.querySelector('#playerNick');
-
 const songs = [
-
     { id: 'song1', cost: 0, src: 'bones.mp3', unlocked: true }, // Free song, already unlocked
-
     { id: 'song2', cost: 99999999999999999, src: 'enemy.mp3', unlocked: false },
-
 ];
-
 // Upewnij się, że zapisujemy coins podczas zapisu stanu gry
-
 // Globalna zmienna na przechowywanie stanu gry
-
 let progress = {};
-
-
 function saveProgress() {
     progress = {
         coins,
@@ -114,18 +72,11 @@ function saveProgress() {
     // Zapisz do localStorage
     localStorage.setItem("buszkoClickerProgress", JSON.stringify(progress));
 }
-
-
 // Save progress periodically to track the last online time
-
 setInterval(() => {
-
     saveProgress();
-
 }, 10000); // Zapisuj co 10 sekund
-
 // Load progress
-
 function loadProgress() {
 
     const savedProgress = localStorage.getItem('buszkoClickerProgress');
@@ -133,47 +84,28 @@ function loadProgress() {
     if (savedProgress) {
 
         const progress = JSON.parse(savedProgress);
-
         coins = progress.coins || 0;
-
         baseCoinsPerClick = progress.baseCoinsPerClick || 1;
-
         coinsPerClick = baseCoinsPerClick;
-
         foodBuff = progress.foodBuff || 0;
-
         currentSkin = progress.currentSkin || 0;
-
         unlockedSkins = progress.unlockedSkins || [true, false, false, false, false, false, false];
-
         activeHelpers = progress.activeHelpers || [false];
-
         const lastOnline = progress.lastOnline || Date.now();
-
         const timeElapsed = (Date.now() - lastOnline) / 1000; // Time elapsed in seconds
-
         // Calculate offline earnings for active helpers
-
 	    activeHelpers.forEach((isActive, index) => {
 
             if (isActive) {
-
                 const earnings = coinsPerClick * helperEarnings[index] * timeElapsed;
-
                 coins += earnings;
-
             }
-
         });
 
         applySkin(currentSkin);
-
         updateCoinDisplay();
-
         updateCoinsInFirebase();  // Synchronizuj dane z Firebase
-
         updateSkinUI();
-
         // Restart active helpers
 
 	    activeHelpers.forEach((isActive, index) => {
@@ -187,21 +119,14 @@ function loadProgress() {
                 }
 
                 startHelper(index); // Restart helper interval here
-
             }
-
         });
-
     }
-
 }
 
 // Initialize the game
-
 loadProgress();
-
 // Reset all progress
-
 function resetProgress() {
 
     if (confirm("Czy jesteś pewnien że chcesz zresetować cały postęp?")) {
