@@ -1,7 +1,7 @@
 // Import Firebase SDK
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
 import { getDatabase, ref, update, onValue, set } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
+import { getAuth, signInWithPopup, GoogleAuthProvider, signInWithRedirect } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
 // Konfiguracja Firebase
 const firebaseConfig = {
     apiKey: "AIzaSyBMPmNPLGHrBBU3d2DNgq1rutE5R5fBAWc",
@@ -67,26 +67,27 @@ async function getGoogleUserId() {
 }
 
 async function initializeAuth() {
-    if (!userId) {  // Only attempt login if there's no userId
-        const provider = new GoogleAuthProvider();
-        try {
-            const result = await signInWithPopup(auth, provider);
-            userId = result.user.uid;
-            console.log("Zalogowano jako:", result.user.displayName);
-            if (userId) {
-                localStorage.setItem("userId", userId);
-            }  // Save userId to localStorage after successful login
-            loadProgressFromFirebase();  // Load the progress from Firebase
-        } catch (error) {
-            console.error("Błąd logowania:", error);
+    const provider = new GoogleAuthProvider();
+    try {
+        const result = await signInWithPopup(auth, provider);
+        userId = result.user.uid;
+        console.log("Zalogowano jako:", result.user.displayName);
+        localStorage.setItem("userId", userId); // Zapisz userId w localStorage
+        loadProgressFromFirebase(); // Wczytaj postęp gry z Firebase
+        updateLoginButton(); // Aktualizacja przycisku logowania
+    } catch (error) {
+        console.error("Błąd logowania:", error);
+        if (error.code === "auth/popup-blocked") {
+            alert("Twoja przeglądarka zablokowała wyskakujące okno. Upewnij się, że jest dozwolone.");
         }
     }
 }
 
+
 document.getElementById('loginButton').addEventListener("click", async () => {
-    await getGoogleUserId();
     initializeAuth();
 });
+
 
 // Funkcja wylogowania
 async function logoutUser() {
