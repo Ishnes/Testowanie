@@ -50,7 +50,6 @@ const songs = [
 // Upewnij się, że zapisujemy coins podczas zapisu stanu gry
 // Globalna zmienna na przechowywanie stanu gry
 
-
 async function getGoogleUserId() {
     const provider = new GoogleAuthProvider();
     try {
@@ -74,7 +73,9 @@ async function initializeAuth() {
             const result = await signInWithPopup(auth, provider);
             userId = result.user.uid;
             console.log("Zalogowano jako:", result.user.displayName);
-            localStorage.setItem("userId", userId);  // Save userId to localStorage after successful login
+            if (userId) {
+                localStorage.setItem("userId", userId);
+            }  // Save userId to localStorage after successful login
             loadProgressFromFirebase();  // Load the progress from Firebase
         } catch (error) {
             console.error("Błąd logowania:", error);
@@ -82,9 +83,10 @@ async function initializeAuth() {
     }
 }
 
-
-document.getElementById('loginButton').addEventListener("click", getGoogleUserId, initializeAuth);
-localStorage.setItem("userId", userId);
+document.getElementById('loginButton').addEventListener("click", async () => {
+    await getGoogleUserId();
+    initializeAuth();
+});
 
 // Funkcja wylogowania
 async function logoutUser() {
@@ -116,9 +118,12 @@ function updateLoginButton() {
 // Wywołanie updateLoginButton na starcie
 document.addEventListener("DOMContentLoaded", () => {
     const savedUserId = localStorage.getItem("userId");
-    userId = savedUserId ? savedUserId : null;
+    if (savedUserId) {
+        userId = savedUserId; // Tylko wtedy przypisuj, gdy savedUserId istnieje
+    }
     updateLoginButton(); // Zaktualizuj tekst przycisku na podstawie stanu użytkownika
 });
+
 
 
 
@@ -578,7 +583,6 @@ function updateCoinsInFirebase() {
         console.error("Błąd w funkcji updateCoinsInFirebase:", error);
     }
 }
-
 
 async function saveNickAndCoinsToFirebase(nick) {
     if (!userId) {
