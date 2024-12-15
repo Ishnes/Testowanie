@@ -68,21 +68,20 @@ async function getGoogleUserId() {
 }
 
 async function initializeAuth() {
-    if (!userId) {
+    if (!userId) {  // Only attempt login if there's no userId
         const provider = new GoogleAuthProvider();
         try {
             const result = await signInWithPopup(auth, provider);
             userId = result.user.uid;
             console.log("Zalogowano jako:", result.user.displayName);
-            // Zapisz userId w localStorage
-            localStorage.setItem("userId", userId);    
-            // Przywróć progres z Firebase
-            loadProgressFromFirebase();
+            localStorage.setItem("userId", userId);  // Save userId to localStorage after successful login
+            loadProgressFromFirebase();  // Load the progress from Firebase
         } catch (error) {
             console.error("Błąd logowania:", error);
         }
     }
 }
+
 
 document.getElementById('loginButton').addEventListener("click", getGoogleUserId, initializeAuth);
 localStorage.setItem("userId", userId);
@@ -392,21 +391,22 @@ function saveScoreToFirebase(nick, score) {
     }
 
     try {
-        const sanitizedId = userId.replace(/\./g, '_'); // Zapewnienie bezpieczeństwa w kluczu Firebase
+        const sanitizedId = userId.replace(/\./g, '_'); // To ensure safe key in Firebase
         const userRef = ref(db, `leaderboard/${sanitizedId}`);
         
-        // Aktualizacja danych w Firebase
+        // Update data in Firebase
         update(userRef, {
             nick: nick,
-            coins: score,
-            lastUpdated: Date.now() // Dodatkowa informacja o czasie aktualizacji
+            coins: coins,
+            lastUpdated: Date.now() // Timestamp for last update
         });
 
-        console.log("Dane zapisane w Firebase:", { nick, score });
+        console.log("Dane zapisane w Firebase:", { nick, coins });
     } catch (error) {
         console.error("Błąd podczas zapisu danych do Firebase:", error);
     }
 }
+
 
 
 async function loadProgressFromFirebase() {
@@ -447,15 +447,18 @@ async function loadProgressFromFirebase() {
     }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+    // First check if the user is already logged in (i.e., if userId is set in localStorage)
     const savedUserId = localStorage.getItem("userId");
+
     if (savedUserId) {
-        userId = savedUserId;
-        loadProgressFromFirebase();
+        userId = savedUserId;  // Set userId from localStorage
+        loadProgressFromFirebase();  // Load the progress if the user is already logged in
     } else {
-        console.log("Użytkownik nie jest zalogowany.");
+        await initializeAuth();  // Only call initializeAuth if userId is not found in localStorage
     }
 });
+
 // Sprawdzanie istnienia elementów przed przypisaniem zdarzenia
 document.addEventListener("DOMContentLoaded", () => {
     const submitButton = document.getElementById("submitNick");
