@@ -88,6 +88,11 @@ localStorage.setItem("userId", userId);
 
 
 function saveProgress() {
+    if (!userId) {
+        console.error("Użytkownik nie jest zalogowany. Nie można zapisać progresu.");
+        return;
+    }
+
     progress = {
         coins,
         baseCoinsPerClick,
@@ -97,11 +102,15 @@ function saveProgress() {
         activeHelpers,
         lastOnline: Date.now()
     };
-    // Zapisz do Firebase
-    updateCoinsInFirebase();
-    // Zapisz do localStorage
-    localStorage.setItem("buszkoClickerProgress", JSON.stringify(progress));
+
+    const sanitizedId = userId.replace(/\./g, '_');
+    const userRef = ref(db, `leaderboard/${sanitizedId}`);
+
+    update(userRef, progress)
+        .then(() => console.log("Progres zapisany w Firebase"))
+        .catch((error) => console.error("Błąd podczas zapisu do Firebase:", error));
 }
+
 // Save progress periodically to track the last online time
 setInterval(() => {
     saveProgress();
@@ -154,6 +163,7 @@ loadProgress();
 function resetProgress() {
     if (confirm("Czy jesteś pewnien że chcesz zresetować cały postęp?")) {
         // Reset all game state
+        localStorage.clear(); // Usuń wszystkie dane z localStorage
         coins = 0;
         baseCoinsPerClick = 1;
         coinsPerClick = baseCoinsPerClick;
@@ -413,9 +423,11 @@ async function loadProgressFromFirebase() {
         console.error("Użytkownik nie jest zalogowany.");
         return;
     }
+
     try {
-        const sanitizedId = userId.replace(/\./g, '_'); // Upewnij się, że ID jest bezpieczne do użycia w Firebase
+        const sanitizedId = userId.replace(/\./g, '_');
         const userRef = ref(db, `leaderboard/${sanitizedId}`);
+
         onValue(userRef, (snapshot) => {
             if (snapshot.exists()) {
                 const savedProgress = snapshot.val();
@@ -426,21 +438,24 @@ async function loadProgressFromFirebase() {
                     currentSkin = savedProgress.currentSkin || 0;
                     unlockedSkins = savedProgress.unlockedSkins || [true, false, false, false, false, false, false];
                     activeHelpers = savedProgress.activeHelpers || [false];
-                    const nick = savedProgress.nick || "Unknown"; // Get the nickname from Firebase
-                    document.getElementById('playerNick').value = nick; // Set the nickname in the input field
-                    calculateCoinsPerClick();
-                    updateCoinDisplay();
-                    updateSkinUI();
-                    console.log("Progres i nick zostały przywrócone z Firebase.");
+                    updateUI();
                 }
             } else {
-                console.log("Brak zapisanych danych dla tego użytkownika.");
+                console.log("Brak zapisanych danych dla tego użytkownika. Inicjalizacja nowego progresu.");
+                saveProgress(); // Zapisz dane dla nowego użytkownika
             }
         });
     } catch (error) {
-        console.error("Błąd przy wczytywaniu progresu z Firebase:", error);
+        console.error("Błąd podczas wczytywania danych z Firebase:", error);
     }
 }
+
+function updateUI() {
+    calculateCoinsPerClick();
+    updateCoinDisplay();
+    updateSkinUI();
+}
+
 
 document.addEventListener("DOMContentLoaded", async () => {
     // First check if the user is already logged in (i.e., if userId is set in localStorage)
