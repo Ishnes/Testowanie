@@ -403,9 +403,7 @@ img
 	}
 	
 	.leaderboard{
-	border:2px #673ab7 solid;
 	background-color:#1e1e1e;
-	border-radius:10px;
 	padding: 20px;
 	height: auto;
  	width: 89%;
@@ -451,7 +449,6 @@ img
 .leaderboard {
     margin-top: 20px;
     padding: 20px;
-    border: 1px solid #673ab7;
 }
 
 #leaderboardTable {
