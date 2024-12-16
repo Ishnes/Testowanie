@@ -349,7 +349,7 @@ img
 
 
 /* Responsive Styles */
-@media (max-width: 400px) {
+@media (max-width: 548px) {
     .skin-item img {
         width: 60px;
         height: 60px;
@@ -363,7 +363,7 @@ img
 
 
 /* Responsive Styles */
-@media (max-width: 400px) {
+@media (max-width: 548px) {
     .logo {
         width: 100%;
     }
