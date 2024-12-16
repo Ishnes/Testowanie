@@ -27,6 +27,7 @@ let currentAudio = null;
 let currentSongId = null;
 let progress = {};
 let userId = null; // Globalna zmienna na ID użytkownika
+let currentNick = ""; // Globalna zmienna na nick
 // DOM Elements
 const coinDisplay = document.querySelector('.coiny');
 const clickerImage = document.getElementById('buszko');
@@ -509,22 +510,39 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 }, 30000); // Zmiana na zapis co 30 sekund
 function updateCoinDisplay() {
-    // Aktualizacja wyświetlania liczby Buszonków
     const safeCoins = Number.isFinite(coins) ? Math.floor(coins) : 0;
     const safeCoinsPerClick = Number.isFinite(coinsPerClick) ? Math.floor(coinsPerClick) : 0;
     coinDisplay.textContent = `Buszonki: ${safeCoins} (Buszonki na kliknięcie: ${safeCoinsPerClick})`;
-    // Pobierz nick gracza
-    const nickInput = document.getElementById("playerNick");
-    const nick = nickInput ? nickInput.value.trim() : "Unknown";
-    // Zapis danych do Firebase
-    saveNickAndCoinsToFirebase(nick);
-    // Zapis danych do localStorage
-    if (progress && typeof progress === 'object') {
+
+    // Użyj globalnej zmiennej zamiast pola tekstowego
+    if (currentNick && currentNick !== "Unknown") {
+        saveNickAndCoinsToFirebase(currentNick);
+    }
+
+    if (progress && typeof progress === "object") {
         localStorage.setItem("buszkoClickerProgress", JSON.stringify(progress));
     } else {
-        console.error('Niepoprawny obiekt progress:', progress);
+        console.error("Niepoprawny obiekt progress:", progress);
     }
 }
+
+document.querySelector("#submitNick").addEventListener("click", () => {
+    const nick = nickInput.value.trim();
+    if (!nick) {
+        alert("Proszę wprowadzić poprawny nick!");
+        return;
+    }
+    currentNick = nick; // Aktualizacja globalnej zmiennej
+    saveNickAndCoinsToFirebase(nick);
+});
+
+setInterval(() => {
+    if (currentNick && coins !== lastSavedScore) {
+        saveNickAndCoinsToFirebase(currentNick);
+        lastSavedScore = coins;
+    }
+}, 10000);
+
 function updateCoinsInFirebase() {
     if (!userId) {
         console.error("Nie można zaktualizować danych w Firebase: brak userId.");
@@ -558,17 +576,19 @@ async function saveNickAndCoinsToFirebase(nick) {
         console.error("Użytkownik nie jest zalogowany.");
         return;
     }
+    if (!nick || nick.trim() === "") {
+        console.error("Nie można zapisać pustego nicku.");
+        return; // Nie zapisuj, jeśli nick jest pusty
+    }
     const userRef = ref(db, `leaderboard/${userId}`);
     try {
         await update(userRef, { nick, coins });
-
         console.log("Nick i coins zapisano pomyślnie w Firebase.");
-
     } catch (error) {
-
         console.error("Błąd zapisu do Firebase:", error);
     }
 }
+
     // Automatyczny zapis wyniku co 10 sekund
     document.addEventListener('DOMContentLoaded', () => {
         const nickInput = document.querySelector('#playerNick');
