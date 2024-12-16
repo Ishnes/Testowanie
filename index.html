@@ -35,6 +35,7 @@
                 <button class="tab-button" id="helpersTab">Pomocnicy</button>
                 <button class="tab-button" id="skinsTab">Skiny</button>
                 <button class="tab-button" id="songsTab">Szafa Grająca</button>
+		<button class="tab-button" id="LeaderboardTab">Tabela Wyników</button>
             </div>
 
             <!-- Sekcje w sklepie -->
@@ -173,27 +174,28 @@
                 </div>
                 </div>
             </div>
+		<section class="leaderboard">
+	        <h3>Leaderboard</h3>
+		<button id="loginButton" class="log">Zaloguj się przez Google</button>
+		    <br>
+	        <input type="text" id="playerNick" placeholder="Wprowadź swój nick">
+	        <button id="submitNick">Zapisz Nick</button>
+	        <table id="leaderboardTable">
+	            <thead>
+	                <tr>
+	                    <th>Nick</th>
+	                    <th>Buszonki</th>
+	                </tr>
+	            </thead>
+	            <tbody>
+	                <!-- Dynamiczne dane -->
+	            </tbody>
+	        </table>
+	    </section>
         </div>
     </div>
 
-    <section class="leaderboard">
-        <h3>Leaderboard</h3>
-	<button id="loginButton" class="log">Zaloguj się przez Google</button>
-	    <br>
-        <input type="text" id="playerNick" placeholder="Wprowadź swój nick">
-        <button id="submitNick">Zapisz Nick</button>
-        <table id="leaderboardTable">
-            <thead>
-                <tr>
-                    <th>Nick</th>
-                    <th>Buszonki</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Dynamiczne dane -->
-            </tbody>
-        </table>
-    </section>
+    
 
 
     <!-- Reset Button -->
