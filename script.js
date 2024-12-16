@@ -127,7 +127,7 @@ function showLogoutCountdown() {
     modal.style.left = '50%';
     modal.style.transform = 'translate(-50%, -50%)';
     modal.style.padding = '20px';
-    modal.style.backgroundColor = 'white';
+    modal.style.backgroundColor = '#1e1e1e';
     modal.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
     modal.style.zIndex = '1000';
     modal.style.textAlign = 'center';
