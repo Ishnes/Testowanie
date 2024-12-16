@@ -82,13 +82,14 @@ document.getElementById('loginButton').addEventListener("click", async () => {
     initializeAuth();
 });
 
+// Modyfikacja funkcji logoutUser
 async function logoutUser() {
     try {
-        await auth.signOut(); // Wylogowanie z Firebase Auth
-        userId = null; // Wyczyszczenie globalnej zmiennej userId
-        localStorage.removeItem("userId"); // Usunięcie userId z localStorage
-        updateLoginButton(); // Zaktualizowanie tekstu przycisku
-        alert("Wylogowano pomyślnie!");
+        await auth.signOut();
+        userId = null;
+        localStorage.removeItem("userId");
+        updateLoginButton();
+        showLogoutCountdown(); // Wywołanie funkcji odliczania
     } catch (error) {
         console.error("Błąd podczas wylogowania:", error);
     }
@@ -107,13 +108,54 @@ function updateLoginButton() {
     }
 }
 
+// Modyfikacja logiki przy ładowaniu strony
 document.addEventListener("DOMContentLoaded", () => {
     const savedUserId = localStorage.getItem("userId");
     if (savedUserId) {
-        userId = savedUserId; // Tylko wtedy przypisuj, gdy savedUserId istnieje
+        userId = savedUserId;
+        loadProgressFromFirebase(); // Wczytaj dane użytkownika z Firebase
     }
-    updateLoginButton(); // Zaktualizuj tekst przycisku na podstawie stanu użytkownika
+    updateLoginButton(); // Zaktualizuj stan przycisku
 });
+
+// Funkcja odliczająca czas i odświeżająca stronę
+function showLogoutCountdown() {
+    let countdown = 10;
+    const modal = document.createElement('div');
+    modal.style.position = 'fixed';
+    modal.style.top = '50%';
+    modal.style.left = '50%';
+    modal.style.transform = 'translate(-50%, -50%)';
+    modal.style.padding = '20px';
+    modal.style.backgroundColor = 'white';
+    modal.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+    modal.style.zIndex = '1000';
+    modal.style.textAlign = 'center';
+
+    const message = document.createElement('p');
+    message.textContent = 'Wylogowano pomyślnie! Strona odświeży się za 10 sekund.';
+    const timer = document.createElement('p');
+    timer.style.fontSize = '24px';
+    timer.style.fontWeight = 'bold';
+    timer.textContent = `Pozostało: ${countdown} sekund`;
+    
+    modal.appendChild(message);
+    modal.appendChild(timer);
+    document.body.appendChild(modal);
+
+    const interval = setInterval(() => {
+        countdown--;
+        timer.textContent = `Pozostało: ${countdown} sekund`;
+        if (countdown === 0) {
+            clearInterval(interval);
+        }
+    }, 1000);
+
+    setTimeout(() => {
+        document.body.removeChild(modal);
+        location.reload();
+    }, 10000);
+}
 
 function saveProgress() {
     if (!userId) {
