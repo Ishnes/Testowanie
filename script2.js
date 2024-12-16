@@ -15,7 +15,7 @@ document.getElementById('songsTab').addEventListener('click', function() {
 });
 
 document.getElementById('LeaderboardTab').addEventListener('click', function() {
-    showSection('leaderboard');
+    showSection('leaderboardSection');
 });
 
 function showSection(sectionId) {
