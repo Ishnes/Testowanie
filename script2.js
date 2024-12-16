@@ -13,6 +13,9 @@ document.getElementById('skinsTab').addEventListener('click', function() {
 document.getElementById('songsTab').addEventListener('click', function() {
     showSection('songsSection');
 });
+document.getElementById('LeaderboardTab').addEventListener('click', function() {
+    showSection('leaderboard');
+});
 
 function showSection(sectionId) {
     // Ukryj wszystkie sekcje
