@@ -238,8 +238,7 @@ function loadProgress() {
         const lastOnline = progress.lastOnline || Date.now();
         const timeElapsed = (Date.now() - lastOnline) / 1000; // Time elapsed in seconds
         // Calculate offline earnings for active helpers
-	    activeHelpers.forEach((isActive, index) => {
-
+        activeHelpers.forEach((isActive, index) => {
             if (isActive) {
                 const earnings = coinsPerClick * helperEarnings[index] * timeElapsed;
                 coins += earnings;
@@ -250,16 +249,12 @@ function loadProgress() {
         updateCoinsInFirebase();  // Synchronizuj dane z Firebase
         updateSkinUI();
         // Restart active helpers
-	    activeHelpers.forEach((isActive, index) => {
-
+        activeHelpers.forEach((isActive, index) => {
             if (isActive) {
-
                 const helperDisplay = document.getElementById(`helperDisplay${index + 1}`);
-
-                if (helperDisplay) {      helperDisplay.classList.remove('hidden');
-
+                if (helperDisplay) {
+                    helperDisplay.classList.remove('hidden');
                 }
-
                 startHelper(index); // Restart helper interval here
             }
         });
@@ -345,7 +340,7 @@ foodItems.forEach((foodItem, index) => {
         const quantity = parseInt(quantityInput.value); // Get the quantity from the input field
         const totalCost = foodPrices[index] * quantity; // Calculate the total cost
 
-        if (quantity <= 0) {
+        if (quantity <= 0 || isNaN(quantity)) {
             alert("Wpisz dodatnią liczbę!");
             return;
         }
@@ -353,8 +348,8 @@ foodItems.forEach((foodItem, index) => {
         if (coins >= totalCost) {
             coins -= totalCost; // Deduct the coins for the total cost
             foodBuff += foodBuffs[index] * quantity; // Apply the food buff multiplied by the quantity
-            foodPrices[index] *= 1.01; // Zwiększamy cenę jedzenia o 5%
-            
+            foodPrices[index] = Math.floor(foodPrices[index] * 1.01); // Zwiększamy cenę jedzenia o 1% i zaokrąglamy
+
             // Zaktualizuj wyświetlaną cenę
             foodSpan.textContent = `${foodItem.querySelector('img').alt} [${formatCoins(Math.floor(foodPrices[index]))} Buszonki] Buszonki +${foodBuffs[index]}`;
 
@@ -366,6 +361,7 @@ foodItems.forEach((foodItem, index) => {
         }
     });
 });
+
 // Event listener for Buszko click
 clickerImage.addEventListener('click', clickBuszko);
 // Event listener for Reset Button
@@ -390,21 +386,17 @@ function purchaseHelper(index) {
         if (helperDisplay) {
             helperDisplay.classList.remove('hidden');
         }
-        startHelper(index);
+        startHelper(index); // Uruchomienie pomocnika
         alert("Pomocnik kupiony!");
         updateCoinDisplay();
         saveProgress(); // Save state after purchase
     } else if (activeHelpers[index]) {
-
         alert("Już masz tego pomocnika!");
-
     } else {
-
         alert("Nie masz wystarczająco Buszonków na tego pomocnika!");
-
     }
-
 }
+
 // Show helper displays only if they exist
 activeHelpers.forEach((isActive, index) => {
     const helperDisplay = document.getElementById(`helperDisplay${index + 1}`);
@@ -486,6 +478,29 @@ songs.forEach(song => {
     });
 });
 
+// Funkcja aktualizująca monety w Firebase
+async function updateCoinsInFirebase() {
+    if (!userId) {
+        console.error("Użytkownik nie jest zalogowany. Nie można zaktualizować monet.");
+        return;
+    }
+
+    try {
+        const sanitizedId = userId.replace(/\./g, '_');
+        const userRef = ref(db, `leaderboard/${sanitizedId}`);
+
+        await update(userRef, {
+            coins, // Aktualizacja liczby monet
+            lastUpdated: Date.now() // Dodanie daty ostatniej aktualizacji
+        });
+
+        console.log("Monety zostały zaktualizowane w Firebase:", coins);
+    } catch (error) {
+        console.error("Błąd aktualizacji monet w Firebase:", error);
+    }
+}
+
+
 // Uniwersalna funkcja zapisu do Firebase
 async function saveUserDataToFirebase(data) {
     if (!userId) {
@@ -507,6 +522,7 @@ async function saveUserDataToFirebase(data) {
         console.error("Błąd zapisu danych do Firebase:", error);
     }
 }
+
 
 // Funkcja ładowania postępu z Firebase
 async function loadProgressFromFirebase() {
@@ -533,11 +549,12 @@ async function loadProgressFromFirebase() {
     }
 }
 
+
 // Inicjalizacja postępu gry
 function initializeGameProgress(data) {
-    coins = data.coins || 0;
-    baseCoinsPerClick = data.baseCoinsPerClick || 1;
-    foodBuff = data.foodBuff || 0;
+    coins = Math.floor(data.coins || 0); // Zaokrąglamy liczbę monet
+    baseCoinsPerClick = Math.floor(data.baseCoinsPerClick || 1); // Zaokrąglamy liczbę monet na kliknięcie
+    foodBuff = Math.floor(data.foodBuff || 0); // Zaokrąglamy buffy jedzenia
     currentSkin = data.currentSkin || 0;
     unlockedSkins = data.unlockedSkins || [true, false, false, false, false, false, false];
     activeHelpers = data.activeHelpers || [false];
@@ -545,6 +562,7 @@ function initializeGameProgress(data) {
 
     updateUI();
 }
+
 
 // Aktualizacja UI
 function updateUI() {
@@ -570,16 +588,18 @@ function updateUI() {
 }
 
 
+
 // Obsługa wyświetlania monet
 function updateCoinDisplay() {
-    const safeCoins = Number.isFinite(coins) ? Math.floor(coins) : 0;
-    const safeCoinsPerClick = Number.isFinite(coinsPerClick) ? Math.floor(coinsPerClick) : 0;
+    const safeCoins = Number.isFinite(coins) ? Math.floor(coins) : 0; // Zapewnia, że monety są liczbą całkowitą
+    const safeCoinsPerClick = Number.isFinite(coinsPerClick) ? Math.floor(coinsPerClick) : 0; // Zapewnia, że monety na kliknięcie są liczbą całkowitą
 
     const formattedCoins = formatCoins(safeCoins);
     const formattedCoinsPerClick = formatCoins(safeCoinsPerClick);
 
     coinDisplay.textContent = `Buszonki: ${formattedCoins} (Buszonki na kliknięcie: ${formattedCoinsPerClick})`;
 }
+
 
 // Inicjalizacja zdarzeń
 document.addEventListener("DOMContentLoaded", async () => {
@@ -613,7 +633,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             saveUserDataToFirebase({ nick: currentNick, coins });
             lastSavedScore = coins;
         }
-    }, 30000);
+    }, 30000); // Automatyczny zapis co 30 sekund
+    
 });
 
 // Aktualizacja tablicy wyników
@@ -639,4 +660,3 @@ function updateLeaderboard() {
 
 // Wywołanie aktualizacji tablicy wyników
 updateLeaderboard();
-
