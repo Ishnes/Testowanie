@@ -552,15 +552,41 @@ async function loadProgressFromFirebase() {
 
 // Inicjalizacja postępu gry
 function initializeGameProgress(data) {
-    coins = Math.floor(data.coins || 0); // Zaokrąglamy liczbę monet
-    baseCoinsPerClick = Math.floor(data.baseCoinsPerClick || 1); // Zaokrąglamy liczbę monet na kliknięcie
-    foodBuff = Math.floor(data.foodBuff || 0); // Zaokrąglamy buffy jedzenia
-    currentSkin = data.currentSkin || 0;
-    unlockedSkins = data.unlockedSkins || [true, false, false, false, false, false, false];
-    activeHelpers = data.activeHelpers || [false];
-    foodPrices = data.foodPrices || [100, 2500, 10000, 300000, 2500000, 50000000];
-
-    updateUI();
+    // Zamiast przypisania do progress, robimy kopię obiektu
+    const newProgress = { ...data }; // Kopiowanie danych z Firebase
+    coins = newProgress.coins || 0;
+    baseCoinsPerClick = newProgress.baseCoinsPerClick || 1;
+    coinsPerClick = baseCoinsPerClick;
+    foodBuff = newProgress.foodBuff || 0;
+    currentSkin = newProgress.currentSkin || 0;
+    unlockedSkins = newProgress.unlockedSkins || [true, false, false, false, false, false, false];
+    activeHelpers = newProgress.activeHelpers || [false];
+    const lastOnline = newProgress.lastOnline || Date.now();
+    const timeElapsed = (Date.now() - lastOnline) / 1000; // Time elapsed in seconds
+    
+    // Calculate offline earnings for active helpers
+    activeHelpers.forEach((isActive, index) => {
+        if (isActive) {
+            const earnings = coinsPerClick * helperEarnings[index] * timeElapsed;
+            coins += earnings;
+        }
+    });
+    
+    applySkin(currentSkin);
+    updateCoinDisplay();
+    updateCoinsInFirebase(); // Synchronizuj dane z Firebase
+    updateSkinUI();
+    
+    // Restart active helpers
+    activeHelpers.forEach((isActive, index) => {
+        if (isActive) {
+            const helperDisplay = document.getElementById(`helperDisplay${index + 1}`);
+            if (helperDisplay) {
+                helperDisplay.classList.remove('hidden');
+            }
+            startHelper(index); // Restart helper interval here
+        }
+    });
 }
 
 
