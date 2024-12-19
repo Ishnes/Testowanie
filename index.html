@@ -4,13 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>Buszko Clicker</title>
+    <link rel="icon" href="B.png" type="image/png">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <div class="waterfall"></div>
     <div class="logo">
-        <h1>Buszko Clicker</h1>
-        <h5>Pre-alpha.v.0.7</h5>
-	<div id="userInfo"></div>
+        <h1 id="neon">Buszko Clicker</h1>
+        
+	<Button onclick="Iopen()" id="openinstrukcja">?</Button>
+	<div id="instrukcja">
+	<h5>Pre-alpha.v.0.8.3</h5>
+	<h4>Instrukcja</h4>
+	<p> 
+	Klikaj w buszko i zbieraj buszonkow
+	Kupuj jedzenie aby karmić Buszko i dostawać więcej buszonków,
+	każdy zakup jedzenia zwiększa jego cenę o 1%.
+	Kupuj także skiny oraz pomocników aby generować większe przychody buszonków.
+	Aby wpisać się do tabeli wyników zaloguj się przez konto google.
+	</p>
+	<Button onclick="Iclose()" id="closeinstrukcja">Zamknij</Button>
+	</div>
     </div>
     <div class="BuszkoClicker">
         <div class="info">
@@ -18,13 +32,16 @@
         </div>
     
         <div class="Buszko">
+            <img src="buszon.png" alt="Buszko" class="clicker" id="buszko" draggable="false">
             <div class="active-helpers">
                 <img id="helperDisplay1" class="active-helper hidden" src="Pies.png" alt="Active Pies">
             </div>
             <div class="active-helpers">
-                <img id="helperDisplay2" class="active-helper2 hidden" src="kot.jpg" alt="Active Kot">
+                <img id="helperDisplay2" class="active-helper hidden" src="kot.jpg" alt="Active Kot">
             </div>
-            <img src="buszon.png" alt="Buszko" class="clicker" id="buszko" draggable="false">
+            <div class="active-helpers">
+                <img id="helperDisplay3" class="active-helper hidden" src="ZygfrydKuchta.png" alt="Active ZygfrydKuchta">
+            </div>
         </div>
         
         <div class="sklep">
@@ -46,45 +63,41 @@
 
                 <div class="food-item" id="food1">
                     <img src="sausage.jpg" alt="Kabanosy"> 
-                    <span>Kabanosy [100 Buszonki] Buszonki +5</span>
+                    <span>Kabanosy [100 Buszonki] Buszonki +1</span>
                     <input type="number" id="food1-quantity" value="1" min="1">
-                    <span id="food1-max">Max: 0</span>
                     <button class="buy-food" id="buy-food1">Kup</button>
                 </div>
                	<div class="food-item" id="food2">
                 	<img src="bulka.png" alt="Bułka z masłem"> 
-                	<span>Bułka z masłem [2500 Buszonki] Buszonki +25</span>
+                	<span>Bułka z masłem [2500 Buszonki] Buszonki +5</span>
                 	<input type="number" id="food2-quantity" value="1" min="1">
-                	<span id="food2-max">Max: 0</span> <!-- Max quantity display -->
                 	<button class="buy-food" id="buy-food2">Kup</button>
            	 </div>
 <div class="food-item" id="food3">
                 <img src="grzeski.png" alt="grzeski"> 
-                <span>Grzeski [100000 Buszonki] Buszonki +100</span>
+                <span>Grzeski [10000 Buszonki] Buszonki +10</span>
                 <input type="number" id="food3-quantity" value="1" min="1">
-                <span id="food3-max">Max: 0</span> <!-- Max quantity display -->
+        
                 <button class="buy-food" id="buy-food3">Kup</button>
             </div>
 <div class="food-item" id="food4">
                 <img src="banan.jpg" alt="Banan"> 
-                <span>Banan [4444444 Buszonki] Buszonki +444</span>
+                <span>Banan [300000 Buszonki] Buszonki +25</span>
                 <input type="number" id="food4-quantity" value="1" min="1">
-                <span id="food4-max">Max: 0</span> <!-- Max quantity display -->
+                 <!-- Max quantity display -->
                 <button class="buy-food" id="buy-food4">Kup</button>
             </div>
 	<div class="food-item" id="food5">
                 <img src="parowka.jpg" alt="Parówka"> 
-                <span>Parówki z czajnika [240000000 Buszonki] Buszonki +975</span>
+                <span>Parówki z czajnika [2500000 Buszonki] Buszonki +100</span>
                 <input type="number" id="food5-quantity" value="1" min="1">
-                <span id="food5-max">Max: 0</span> <!-- Max quantity display -->
                 <button class="buy-food" id="buy-food5">Kup</button>
             </div>
 
 <div class="food-item" id="food6">
                 <img src="pepsi.jpg" alt="Pepsi"> 
-                <span>Pepsi [5600000000 Buszonki] Buszonki +1650</span>
+                <span>Pepsi [50000000 Buszonki] Buszonki +250</span>
                 <input type="number" id="food6-quantity" value="1" min="1">
-                <span id="food6-max">Max: 0</span> <!-- Max quantity display -->
                 <button class="buy-food" id="buy-food6">Kup</button>
             </div>
 
@@ -101,11 +114,15 @@
                 <div class="helpers">
                     <div class="helper-item" id="helper1">
                         <img src="Pies.png" alt="Pies Helper">
-                        <span>Pies [125000 Buszonki] Automatyczne 2% Buszonków na klik.</span>
+                        <span>Pies [225000 Buszonki] Automatyczne 1% Buszonków na klik.</span>
                     </div>
                     <div class="helper-item" id="helper2">
                         <img src="kot.jpg" alt="Kot Helper">
-                        <span>Luna [500000 Buszonki] Automatyczne 5% Buszonków na klik.</span>
+                        <span>Luna [1000000 Buszonki] Automatyczne 5% Buszonków na klik.</span>
+                    </div>
+                    <div class="helper-item" id="helper2">
+                        <img src="ZygfrydKuchta.png" alt="ZygfrydKuchta Helper">
+                        <span>Luna [5000A Buszonki] Automatyczne 10% Buszonków na klik.</span>
                     </div>
                 </div>
             </div>
@@ -121,39 +138,55 @@
                     </div>
                     <div class="skin-item">
                     <img src="buszko.png" alt="First Skin" title="First Skin">
-                    <p class="price">[Skupiony Buszon] 7500 Buszonków (Buszonki razy 2)</p>
+                    <p class="price">[Skupiony Buszon] 10000 Buszonków (Buszonki razy 2)</p>
                 </div>
                 <div class="skin-item">
                     <img src="seba.png" alt="Second Skin" title="Second Skin">
-                    <p class="price">[Sebachad] 200000 Buszonków (Buszonki razy 5)</p>
+                    <p class="price">[Sebachad] 200000 Buszonków (Buszonki razy 4)</p>
                 </div>
                 <div class="skin-item">
                     <img src="sheison.png" alt="Third Skin" title="Third Skin">
-                    <p class="price">[ProSheison] 72000000 Buszonków (Buszonki razy 10)</p>
+                    <p class="price">[ProSheison] 3000000 Buszonków (Buszonki razy 10)</p>
                 </div>
                 <div class="skin-item">
                     <img src="buszkobasen.jpg" alt="Fourth Skin" title="Fourth Skin">
-                    <p class="price">[Basenowy Buszko] 690000000 Buszonków (Buszonki razy 55)</p>
+                    <p class="price">[Basenowy Buszko] 40000000 Buszonków (Buszonki razy 20)</p>
                 </div>
                 <div class="skin-item">
                     <img src="StrasznyBusz.png" alt="Fifth Skin" title="Fifth Skin">
-                    <p class="price">[KittyKat] 2300000000 Buszonków (Buszonki razy 100)</p>
+                    <p class="price">[KittyKat] 50000000 Buszonków (Buszonki razy 50)</p>
                 </div>
                 <div class="skin-item">
                     <img src="sigmabusz.png" alt="Sixth Skin" title="Sixth Skin">
-                    <p class="price">[SigmaBusz] 420000000000 Buszonków (Buszonki razy 420)</p>
+                    <p class="price">[SigmaBusz] 6000C Buszonków (Buszonki razy 100)</p>
                 </div>
                 <div class="skin-item">
                     <img src="buszkoxspiderman.png" alt="Seventh Skin" title="Seventh Skin">
-                    <p class="price">[Buszko x Spiderman] 69000000000000000 Buszonków (Buszonki razy 696)</p>
+                    <p class="price">[Buszko x Spiderman] 7000D Buszonków (Buszonki razy 250)</p>
                 </div>
                 <div class="skin-item">
                     <img src="BoskiBusz.png" alt="Eight Skin" title="Eight Skin">
-                    <p class="price">[BoskiBusz] 999999999999999999 Buszonków (Buszonki razy 1000)</p>
+                    <p class="price">[BoskiBusz] 8000F Buszonków (Buszonki razy 500)</p>
                 </div>
                 <div class="skin-item">
                     <img src="RockSolidBusz.jpg" alt="Eight Skin" title="Eight Skin">
-                    <p class="price">[RockSolidBusz] 99999999999999999999999999999999 Buszonków (Buszonki razy 9999 i +10 do edging)</p>
+                    <p class="price">[RockSolidBusz] 9000I Buszonków (Buszonki razy 1000 i +10 do edging)</p>
+                </div>
+                <div class="skin-item">
+                    <img src="discordbusz.png" alt="Ninth Skin" title="Ninth Skin">
+                    <p class="price">[discordbusz] 1000L Buszonków (Buszonki razy 1200)</p>
+                </div>
+                <div class="skin-item">
+                    <img src="surprisedbuszko.jpg" alt="Tenth Skin" title="Tenth Skin">
+                    <p class="price">[surprisedbuszko] 1100O Buszonków (Buszonki razy 1400)</p>
+                </div>
+                <div class="skin-item">
+                    <img src="buszonkwas.png" alt="Eleventh Skin" title="Eleventh Skin">
+                    <p class="price">[buszonkwas] 1200S Buszonków (Buszonki razy 1600)</p>
+                </div>
+                <div class="skin-item">
+                    <img src="Mewingbusz.png" alt="Twelfth Skin" title="Twelfth Skin">
+                    <p class="price">[Mewingbusz] 1300V Buszonków (Buszonki razy 1800)</p>
                 </div>
 
                 </div>
@@ -170,7 +203,7 @@
                     </div>
                     <div class="songs-item">
                     <img src="enemy.jpg" alt="Enemy Song" id="song2" class="song-image locked" title="Locked: 				999,999,999,999 Buszonki">
-                    <p class="price">Enemy 99999999999999999 Buszonków </p>
+                    <p class="price">Enemy 9999 Buszonków </p>
                 </div>
                 </div>
             </div>
@@ -202,9 +235,10 @@
     <div class="reset-container">
         <button id="resetButton">Reset Postępu</button>
     </div>
-
+    
     
 	<script type="module" src="script.js"></script>
     <script src="script2.js" ></script>
+	<script src="script3.js" ></script>
 </body>
 </html>

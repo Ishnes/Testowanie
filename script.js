@@ -34,17 +34,53 @@ const clickerImage = document.getElementById('buszko');
 const foodItems = document.querySelectorAll('.food-item');
 const skinImages = document.querySelectorAll('.skins .skin-item img');
 const resetButton = document.getElementById('resetButton');
-const skinPrices = [0, 7500, 200000, 72000000, 690000000, 2300000000, 420000000000, 69000000000000000, 999999999999999999, 99999999999999999999999999999999];
-const skinMultipliers = [1, 2, 5, 10, 55, 100, 420, 696, 1000, 9999];
-const foodPrices = [100, 2500, 100000, 4444444, 240000000, 5600000000];
-const foodBuffs = [5, 25, 100, 444, 975, 1650];
-const helperPrices = [125000, 500000];
-const helperEarnings = [0.02, 0.05]; // 10% of current Buszonki per click
+const skinPrices = 
+[
+    0, 
+    10000, 
+    200000, 
+    3000000, 
+    40000000, 
+    500000000, 
+    60000000000, 
+    700000000000, 
+    80000000000000, 
+    90000000000000000, 
+    10000000000000000000, 
+    11000000000000000000000,
+    120000000000000000000000000,
+    130000000000000000000000000000
+];
+const skinMultipliers = [1, 2, 4, 10, 20, 50, 100, 250, 500, 1000, 1200, 1400, 1600, 1800];
+const foodPrices = [100, 2500, 10000, 300000, 2500000, 50000000];
+const foodBuffs = [1, 5, 10, 25, 100, 250];
+const helperPrices = [225000, 1000000, 500000000];
+const helperEarnings = [0.01, 0.05, 0.10]; // 10% of current Buszonki per click
 const nickInput = document.querySelector('#playerNick');
 const songs = [
     { id: 'song1', cost: 0, src: 'bones.mp3', unlocked: true }, // Free song, already unlocked
-    { id: 'song2', cost: 99999999999999999, src: 'enemy.mp3', unlocked: false },];
+    { id: 'song2', cost: 9999, src: 'enemy.mp3', unlocked: false },];
 
+function formatCoins(value) {
+    if (value < 100_000_000) return value.toString();
+
+    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    let zeros = Math.floor(Math.log10(value)); // Liczba zer w liczbie
+    let letterIndex = Math.max(0, zeros - 8); // Odliczamy od 100 milionów (8 zer)
+
+    // Obsługa wieloliterowych oznaczeń
+    let letter = '';
+    while (letterIndex >= 0) {
+        letter = alphabet[letterIndex % 26] + letter;
+        letterIndex = Math.floor(letterIndex / 26) - 1; // Obsługa kolejnych "cykli"
+    }
+
+    // Obliczanie prefiksu (pierwsze 4 cyfry)
+    const divisor = Math.pow(10, zeros - 3); // Dzielenie liczby tak, aby 4 cyfry zostały
+    const prefix = Math.floor(value / divisor); // Prefiks jako liczba całkowita z 4 cyframi
+
+    return `${prefix}${letter}`;
+}
 async function getGoogleUserId() {
     const provider = new GoogleAuthProvider();
     try {
@@ -157,26 +193,32 @@ function showLogoutCountdown() {
     }, 10000);
 }
 
-function saveProgress() {
+async function saveProgress() {
     if (!userId) {
         console.error("Użytkownik nie jest zalogowany. Nie można zapisać progresu.");
         return;
     }
     progress = {
+        nick: currentNick, // Dodaj nick
         coins,
         baseCoinsPerClick,
         foodBuff,
         currentSkin,
         unlockedSkins,
         activeHelpers,
-        lastOnline: Date.now()
+        foodPrices,
+        lastOnline: Date.now(),
     };
     const sanitizedId = userId.replace(/\./g, '_');
     const userRef = ref(db, `leaderboard/${sanitizedId}`);
-    update(userRef, progress)
-        .then(() => console.log("Progres zapisany w Firebase"))
-        .catch((error) => console.error("Błąd podczas zapisu do Firebase:", error));
+    try {
+        await update(userRef, progress);
+        console.log("Progres zapisany w Firebase");
+    } catch (error) {
+        console.error("Błąd podczas zapisu do Firebase:", error);
+    }
 }
+
 
 setInterval(() => {
     saveProgress();
@@ -227,28 +269,20 @@ function loadProgress() {
 loadProgress();
 // Reset all progress
 function resetProgress() {
-    if (confirm("Czy jesteś pewnien że chcesz zresetować cały postęp?")) {
-        // Reset all game state
-        localStorage.clear(); // Usuń wszystkie dane z localStorage
+    if (confirm("Czy jesteś pewien, że chcesz zresetować cały postęp?")) {
         coins = 0;
         baseCoinsPerClick = 1;
-        coinsPerClick = baseCoinsPerClick;
         foodBuff = 0;
         currentSkin = 0;
         unlockedSkins = [true, false, false, false, false, false, false];
-        activeHelpers = [false]; // Reset all helpers
-        // Hide all helper displays
-	    document.querySelectorAll('.helper-item').forEach((helperItem, index) => {
-            const helperDisplay = document.getElementById(`helperDisplay${index + 1}`);
-            if (helperDisplay) {
-		    helperDisplay.classList.add('hidden');
-            }
-        });
-        saveProgress();
-        loadProgress();
-        alert("Postęp zresetowany!");
+        activeHelpers = [false];
+        foodPrices = [100, 2500, 10000, 300000, 2500000, 50000000];
+        saveProgress(); // Zapisz zresetowany progres
+        loadProgress(); // Załaduj stan gry
+        updateUI(); // Zaktualizuj UI
     }
 }
+
 // Funkcja do obsługi kliknięcia Buszko
 function clickBuszko() {
     coins += coinsPerClick; // Zwiększanie liczby coins o wartość coinsPerClick
@@ -305,34 +339,29 @@ skinImages.forEach((img, index) => {
 foodItems.forEach((foodItem, index) => {
     const buyButton = document.getElementById(`buy-food${index + 1}`);
     const quantityInput = document.getElementById(`food${index + 1}-quantity`);
-    const maxQuantityDisplay = document.getElementById(`food${index + 1}-max`);
-    // Function to update the maximum quantity of food that can be bought
-    function updateMaxQuantity() {
-        const maxQuantity = Math.floor(coins / foodPrices[index]); // Calculate the maximum number of items
-        maxQuantityDisplay.textContent = `Max: ${maxQuantity}`; // Update the max quantity display
-	    quantityInput.setAttribute("max", maxQuantity); // Set the max value in the input field
-    }
-    // Update max quantity when the page loads and when coins change
-    updateMaxQuantity();
-    // Recalculate max quantity whenever the player has enough coins
-	buyButton.addEventListener('click', () => {
+    const foodSpan = foodItem.querySelector('span'); // Element, w którym będzie wyświetlana cena
+
+    buyButton.addEventListener('click', () => {
         const quantity = parseInt(quantityInput.value); // Get the quantity from the input field
         const totalCost = foodPrices[index] * quantity; // Calculate the total cost
+
         if (quantity <= 0) {
             alert("Wpisz dodatnią liczbę!");
             return;
         }
+
         if (coins >= totalCost) {
             coins -= totalCost; // Deduct the coins for the total cost
             foodBuff += foodBuffs[index] * quantity; // Apply the food buff multiplied by the quantity
+            foodPrices[index] *= 1.01; // Zwiększamy cenę jedzenia o 5%
+            
+            // Zaktualizuj wyświetlaną cenę
+            foodSpan.textContent = `${foodItem.querySelector('img').alt} [${formatCoins(Math.floor(foodPrices[index]))} Buszonki] Buszonki +${foodBuffs[index]}`;
+
             calculateCoinsPerClick(); // Recalculate the coins per click
-            alert(`Nakarmiłeś Buszona! Dostajesz więcej Buszonków: ${foodBuffs[index] * quantity}.`);
             updateCoinDisplay();
-            saveProgress();
-            updateMaxQuantity(); // Update the max quantity after purchase
-
+            saveProgress(); // Zapisz zmienione dane (w tym ceny jedzenia) w Firebase
         } else {
-
             alert(`Nie masz wystarczająco Buszonków, żeby to kupić!`);
         }
     });
@@ -456,28 +485,30 @@ songs.forEach(song => {
         }
     });
 });
-	
-// Save Nick and Coins to Firebase
-async function saveScoreToFirebase(nick, coins) {
+
+// Uniwersalna funkcja zapisu do Firebase
+async function saveUserDataToFirebase(data) {
     if (!userId) {
-        console.error("Użytkownik nie jest zalogowany. Nie można zapisać wyniku.");
+        console.error("Użytkownik nie jest zalogowany. Nie można zapisać danych.");
         return;
     }
+
     try {
-        const sanitizedId = userId.replace(/\./g, '_'); // Ensure the ID is safe for Firebase
+        const sanitizedId = userId.replace(/\./g, '_');
         const userRef = ref(db, `leaderboard/${sanitizedId}`);
-        // Save both nickname and coins in Firebase
+
         await update(userRef, {
-            nick: nick,
-            coins: coins,
-            lastUpdated: Date.now() // Timestamp for last update
+            ...data,
+            lastUpdated: Date.now(), // Zapis ostatniej aktualizacji
         });
-        console.log("Dane zapisane w Firebase:", { nick, coins });
+
+        console.log("Dane zapisane w Firebase:", data);
     } catch (error) {
-        console.error("Błąd podczas zapisu danych do Firebase:", error);
+        console.error("Błąd zapisu danych do Firebase:", error);
     }
 }
-// Load progress and nickname from Firebase
+
+// Funkcja ładowania postępu z Firebase
 async function loadProgressFromFirebase() {
     if (!userId) {
         console.error("Użytkownik nie jest zalogowany.");
@@ -490,175 +521,122 @@ async function loadProgressFromFirebase() {
 
         onValue(userRef, (snapshot) => {
             if (snapshot.exists()) {
-                const savedProgress = snapshot.val();
-                if (savedProgress) {
-                    coins = savedProgress.coins || 0;
-                    baseCoinsPerClick = savedProgress.baseCoinsPerClick || 1;
-                    foodBuff = savedProgress.foodBuff || 0;
-                    currentSkin = savedProgress.currentSkin || 0;
-                    unlockedSkins = savedProgress.unlockedSkins || [true, false, false, false, false, false, false];
-                    activeHelpers = savedProgress.activeHelpers || [false];
-                    updateUI();
-                }
+                const data = snapshot.val();
+                initializeGameProgress(data);
             } else {
-                console.log("Brak zapisanych danych dla tego użytkownika. Inicjalizacja nowego progresu.");
-                saveProgress(); // Zapisz dane dla nowego użytkownika
+                console.log("Brak zapisanych danych, inicjalizacja nowego progresu.");
+                saveUserDataToFirebase(defaultProgress);
             }
         });
     } catch (error) {
         console.error("Błąd podczas wczytywania danych z Firebase:", error);
     }
 }
+
+// Inicjalizacja postępu gry
+function initializeGameProgress(data) {
+    coins = data.coins || 0;
+    baseCoinsPerClick = data.baseCoinsPerClick || 1;
+    foodBuff = data.foodBuff || 0;
+    currentSkin = data.currentSkin || 0;
+    unlockedSkins = data.unlockedSkins || [true, false, false, false, false, false, false];
+    activeHelpers = data.activeHelpers || [false];
+    foodPrices = data.foodPrices || [100, 2500, 10000, 300000, 2500000, 50000000];
+
+    updateUI();
+}
+
+// Aktualizacja UI
 function updateUI() {
-    calculateCoinsPerClick();
+    // Zaktualizuj wyświetlanie monet i innych danych
     updateCoinDisplay();
+
+    // Zaktualizuj ceny jedzenia
+    foodItems.forEach((foodItem, index) => {
+        const foodSpan = foodItem.querySelector('span');
+        foodSpan.textContent = `${foodItem.querySelector('img').alt} [${formatCoins(foodPrices[index])} Buszonki] Buszonki +${foodBuffs[index]}`;
+    });
+
+    // Ukryj aktywnych pomocników
+    document.querySelectorAll('.helper-item').forEach((helperItem, index) => {
+        const helperDisplay = document.getElementById(`helperDisplay${index + 1}`);
+        if (helperDisplay) {
+            helperDisplay.classList.add('hidden');
+        }
+    });
+
+    // Zaktualizuj wyświetlanie skórek
     updateSkinUI();
 }
-document.addEventListener("DOMContentLoaded", async () => {
-    // First check if the user is already logged in (i.e., if userId is set in localStorage)
-    const savedUserId = localStorage.getItem("userId");
 
-    if (savedUserId) {
-        userId = savedUserId;  // Set userId from localStorage
-        loadProgressFromFirebase();  // Load the progress if the user is already logged in
-    } else {
-        await initializeAuth();  // Only call initializeAuth if userId is not found in localStorage
-    }
-});
-// Sprawdzanie istnienia elementów przed przypisaniem zdarzenia
-document.addEventListener("DOMContentLoaded", () => {
-    const submitButton = document.getElementById("submitNick");
-    const nickInput = document.getElementById("playerNick");
-    // Ensure both elements exist before proceeding
-    if (!submitButton || !nickInput) {
-        console.error("Submit button or nick input is missing in the DOM.");
-        return;
-    }
-     submitButton.addEventListener("click", () => {
-        const nick = nickInput.value.trim();
-        if (!nick) {
-            alert("Proszę wprowadzić poprawny nick!");
-            return;
-        }
-    saveScoreToFirebase(nick, coins); // Save both nickname and coins to Firebase
-    });
-});
-    // Other initialization logic requiring nickInput
-    setInterval(() => {
-    const nick = nickInput.value.trim();
-    if (nick && coins !== lastSavedScore) { // Zapis tylko jeśli monety się zmieniły
-        saveNickAndCoinsToFirebase(nick);
-        lastSavedScore = coins; // Aktualizuj ostatnio zapisany wynik
-    }
-}, 30000); // Zmiana na zapis co 30 sekund
+
+// Obsługa wyświetlania monet
 function updateCoinDisplay() {
     const safeCoins = Number.isFinite(coins) ? Math.floor(coins) : 0;
     const safeCoinsPerClick = Number.isFinite(coinsPerClick) ? Math.floor(coinsPerClick) : 0;
-    coinDisplay.textContent = `Buszonki: ${safeCoins} (Buszonki na kliknięcie: ${safeCoinsPerClick})`;
 
-    // Użyj globalnej zmiennej zamiast pola tekstowego
-    if (currentNick && currentNick !== "Unknown") {
-        saveNickAndCoinsToFirebase(currentNick);
-    }
+    const formattedCoins = formatCoins(safeCoins);
+    const formattedCoinsPerClick = formatCoins(safeCoinsPerClick);
 
-    if (progress && typeof progress === "object") {
-        localStorage.setItem("buszkoClickerProgress", JSON.stringify(progress));
-    } else {
-        console.error("Niepoprawny obiekt progress:", progress);
-    }
+    coinDisplay.textContent = `Buszonki: ${formattedCoins} (Buszonki na kliknięcie: ${formattedCoinsPerClick})`;
 }
 
-document.querySelector("#submitNick").addEventListener("click", () => {
-    const nick = nickInput.value.trim();
-    if (!nick) {
-        alert("Proszę wprowadzić poprawny nick!");
-        return;
+// Inicjalizacja zdarzeń
+document.addEventListener("DOMContentLoaded", async () => {
+    const savedUserId = localStorage.getItem("userId");
+
+    if (savedUserId) {
+        userId = savedUserId;
+        loadProgressFromFirebase();
+    } else {
+        await initializeAuth();
     }
-    currentNick = nick; // Aktualizacja globalnej zmiennej
-    saveNickAndCoinsToFirebase(nick);
+
+    const submitButton = document.getElementById("submitNick");
+    const nickInput = document.getElementById("playerNick");
+
+    if (submitButton && nickInput) {
+        submitButton.addEventListener("click", () => {
+            const nick = nickInput.value.trim();
+            if (!nick) {
+                alert("Proszę wprowadzić poprawny nick!");
+                return;
+            }
+            currentNick = nick;
+            saveUserDataToFirebase({ nick, coins });
+        });
+    }
+
+    // Automatyczny zapis co 30 sekund
+    setInterval(() => {
+        if (currentNick && coins !== lastSavedScore) {
+            saveUserDataToFirebase({ nick: currentNick, coins });
+            lastSavedScore = coins;
+        }
+    }, 30000);
 });
 
-setInterval(() => {
-    if (currentNick && coins !== lastSavedScore) {
-        saveNickAndCoinsToFirebase(currentNick);
-        lastSavedScore = coins;
-    }
-}, 10000);
-
-function updateCoinsInFirebase() {
-    if (!userId) {
-        console.error("Nie można zaktualizować danych w Firebase: brak userId.");
-        return;
-    }
-    try {
-        const sanitizedId = userId.replace(/\./g, '_'); // Upewnij się, że ID jest bezpieczne do użycia w Firebase
-        const userRef = ref(db, `leaderboard/${sanitizedId}`);
-        const data = {
-            coins,
-            baseCoinsPerClick,
-            foodBuff,
-            currentSkin,
-            unlockedSkins,
-            activeHelpers,
-            lastOnline: Date.now(),
-        };
-        update(userRef, data)
-            .then(() => {
-                console.log("Dane zostały pomyślnie zaktualizowane w Firebase.");
-            })
-            .catch((error) => {
-                console.error("Błąd podczas aktualizacji danych w Firebase:", error);
-            });
-    } catch (error) {
-        console.error("Błąd w funkcji updateCoinsInFirebase:", error);
-    }
-}
-async function saveNickAndCoinsToFirebase(nick) {
-    if (!userId) {
-        console.error("Użytkownik nie jest zalogowany.");
-        return;
-    }
-    if (!nick || nick.trim() === "") {
-        console.error("Nie można zapisać pustego nicku.");
-        return; // Nie zapisuj, jeśli nick jest pusty
-    }
-    const userRef = ref(db, `leaderboard/${userId}`);
-    try {
-        await update(userRef, { nick, coins });
-        console.log("Nick i coins zapisano pomyślnie w Firebase.");
-    } catch (error) {
-        console.error("Błąd zapisu do Firebase:", error);
-    }
-}
-
-    // Automatyczny zapis wyniku co 10 sekund
-    document.addEventListener('DOMContentLoaded', () => {
-        const nickInput = document.querySelector('#playerNick');
-        setInterval(() => {
-            const nick = nickInput.value.trim();
-            if (nick && coins !== lastSavedScore) {
-                saveScoreToFirebase(nick, coins);
-                lastSavedScore = coins;
-            }
-        }, 10000);
-    });
-    // Inicjalizacja tablicy wyników
-    updateLeaderboard();
-// Funkcja do aktualizacji tablicy wyników
+// Aktualizacja tablicy wyników
 function updateLeaderboard() {
     const leaderboardRef = ref(db, "leaderboard");
     onValue(leaderboardRef, (snapshot) => {
         const leaderboardTable = document.querySelector("#leaderboardTable tbody");
         if (!leaderboardTable) return;
-        leaderboardTable.innerHTML = ""; // Wyczyść tabelę przed odświeżeniem
+
+        leaderboardTable.innerHTML = "";
         const data = snapshot.val();
         if (data) {
             const sortedData = Object.values(data).sort((a, b) => b.coins - a.coins);
             sortedData.forEach((entry) => {
+                const formattedCoins = formatCoins(entry.coins);
                 const row = document.createElement("tr");
-                row.innerHTML = `<td>${entry.nick}</td><td>${entry.coins}</td>`;
+                row.innerHTML = `<td>${entry.nick}</td><td>${formattedCoins}</td>`;
                 leaderboardTable.appendChild(row);
             });
         }
     });
 }
+
+// Wywołanie aktualizacji tablicy wyników
+updateLeaderboard();
+

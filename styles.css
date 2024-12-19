@@ -1,6 +1,5 @@
 /* General Styles */
 
-
 body {
     background-color: #121212; /* Ciemnoszare tło */
     color: #e0e0e0; /* Jasnoszary tekst */
@@ -14,8 +13,6 @@ body {
 	overflow-x: hidden;
 }
 
-
-
 /* Logo Styles */
 .logo {
     text-align: center;
@@ -24,6 +21,55 @@ body {
     width: 500px;
     padding: 10px;
     border-radius: 10px;
+}
+
+#neon {
+            font-family: Arial, sans-serif;
+            font-size: 55px; /* Rozmiar czcionki */
+            color: #fff; /* Podstawowy kolor tekstu (turkusowy) */
+            text-shadow: 
+                0 0 5px #fff, 
+                0 0 10px #fff, 
+                0 0 20px #fff, 
+                0 0 40px #faf, 
+                0 0 80px #faf, 
+                0 0 90px #faf, 
+                0 0 100px #faf; /* Wielopoziomowy cień dla efektu neonu */
+            text-transform: uppercase; /* Tekst dużymi literami */
+            letter-spacing: 1px; /* Rozstawienie liter */
+}
+
+#neon:hover {
+    cursor: pointer;
+}
+
+#openinstrukcja
+{
+	border-radius:50%;
+}
+
+#openinstrukcja:hover
+{
+	cursor:pointer;
+}
+
+#closeinstrukcja:hover
+{
+	cursor:pointer;
+}
+
+#instrukcja
+{
+	top:20%;
+	left:40%;
+	padding:15px;
+	position:absolute;
+	Display:none;
+	background-color:gray;
+	border-radius:5px;
+	width:300px;
+	height:400px;
+	z-index:1;
 }
 
 /* Main Clicker Container */
@@ -53,7 +99,7 @@ body {
 }
 
 .clicker:hover {
-    cursor: crosshair;
+    
     transform: scale(1.05);
     transition: transform 0.2s;
 }
@@ -258,7 +304,7 @@ hr {
 /* Active Helpers */
 .active-helpers {
     position: absolute;
-    top: 50%;
+    top: 65%;
     left: 60%;
     transform: translate(100%, -50%);
     display: flex;
@@ -368,6 +414,13 @@ img
         width: 100%;
     }
 
+	#instrukcja
+	{
+		top:20%;
+		left:10%;
+		
+	}
+
     .clicker {
         width: 300px;
 		height: 300px;
@@ -388,7 +441,7 @@ img
     }
 	.active-helpers {
     position: absolute;
-    top: 62%;
+    top: 70%;
     left: 60%;
     transform: translate(100%, -50%);
     display: flex;
