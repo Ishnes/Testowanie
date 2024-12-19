@@ -27,10 +27,10 @@ function neontoggle()
 {
 	if(neon.style.textShadow  ===  "none")
 	{
-		neon(lighton())
+		lighton();
 	}else
 	{
-		neon(lightoff())
+		lightoff();
 	}
 	
 }
